@@ -1,0 +1,95 @@
+parameters:
+  locale: 'de'
+  locales: ['de', 'en']
+  image_path_prefix: '/uploads/images'
+  image_upload_path: '%kernel.project_dir%/test/public%image_path_prefix%'
+  router.request_context.host: example.org
+  router.request_context.scheme: https
+  router.request_context.base_url: /
+
+framework:
+  secret: '%env(APP_SECRET)%'
+  php_errors:
+    log: true
+  validation:
+    enabled: true
+    enable_annotations: true
+  annotations: true
+  router:
+    strict_requirements: ~
+    resource: ~
+  test: true
+  session:
+    storage_id: session.storage.mock_file
+
+barthy_image_upload:
+  max_file_size: 2M
+  file_name_language: '%locale%'
+
+vich_uploader:
+  db_driver: orm
+  mappings:
+    images:
+      uri_prefix: '%image_path_prefix%'
+      upload_destination: '%image_upload_path%'
+      inject_on_load:     true
+      delete_on_update:   true
+      delete_on_remove:   true
+      namer:
+        service: Barthy\SlugFilenameBundle\DependencyInjection\SlugFileNamer
+        options:
+          language: '%locale%'
+
+doctrine:
+  dbal:
+    # configure these for your database server
+    driver: 'pdo_mysql'
+    server_version: '5.7'
+    charset: utf8mb4
+    default_table_options:
+      charset: utf8mb4
+      collate: utf8mb4_unicode_ci
+
+    url: '%env(resolve:DATABASE_URL)%'
+  orm:
+    auto_generate_proxy_classes: '%kernel.debug%'
+    naming_strategy: doctrine.orm.naming_strategy.underscore
+    auto_mapping: true
+    mappings:
+      App:
+        is_bundle: false
+        type: annotation
+        dir: '%kernel.project_dir%/src/Entity'
+        prefix: 'App\Entity'
+        alias: App
+
+liip_imagine:
+  resolvers:
+    default:
+      web_path: ~
+  filter_sets:
+    cache: ~
+
+monolog:
+  handlers:
+    main:
+      type: stream
+      path: "%kernel.logs_dir%/%kernel.environment%.log"
+      level: debug
+      channels: ["!event"]
+
+twig:
+  default_path: '%kernel.project_dir%/templates'
+  debug: '%kernel.debug%'
+  strict_variables: '%kernel.debug%'
+
+sensio_framework_extra:
+  router:
+    annotations: false
+
+a2lix_translation_form:
+  locale_provider: default
+  locales: '%locales%'
+  default_locale: '%locale%'
+  required_locales: ['%locale%']
+

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="de">
+    <file id="barthy_image_upload.de">
+        <unit id="IDknSPSRGuzfzmLF" name="image.title.not_empty">
+            <segment>
+                <source>image.title.not_empty</source>
+                <target>The image title for "%domain%" must not be empty.</target>
+            </segment>
+        </unit>
+        <unit id="dU5RR417lIbOz3xC" name="image.alt.not_empty">
+            <segment>
+                <source>image.alt.not_empty</source>
+                <target>The image description for "%domain%" must not be empty.</target>
+            </segment>
+        </unit>
+        <unit id="ZljLi6WAXOVfrNA" name="image.translation.not_empty">
+            <segment>
+                <source>image.translation.not_empty</source>
+                <target>The image text fields must not be empty for "%domain%".</target>
+            </segment>
+        </unit>
+        <unit id="BgJOWmhOV3igXal" name="image.file.not_empty">
+            <segment>
+                <source>image.file.not_empty</source>
+                <target>The file field must not be empty.</target>
+            </segment>
+        </unit>
+        <unit id="cuJnctHZ" name="file_size_constraint.message">
+            <segment>
+                <source>file_size_constraint.message</source>
+                <target>The file must not be bigger than %size% bytes.</target>
+            </segment>
+        </unit>
+    </file>
+</xliff>
