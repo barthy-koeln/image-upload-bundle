@@ -6,7 +6,7 @@ set -o nounset
 # Use the error status of the first failure, rather than that of the last item in a pipeline.
 set -o pipefail
 
-PERCENT=$(./vendor/bin/phpunit ./test --coverage-text --colors=never | tee /dev/tty | grep -Eo --color=never '^\s*Lines:\s*(\d+.)' | grep -Eo --color=never '(\d+)')
+PERCENT=$(./vendor/bin/phpunit ./test --coverage-text --colors=never | tee /dev/tty | grep -Eo --color=never '^\s*Lines:\s*(\d+)' | grep -Eo --color=never '(\d+)')
 
 if [[ ${PERCENT} -gt 75 ]]; then
     COLOR=green
@@ -18,12 +18,23 @@ else
     COLOR=red
 fi
 
-BADGE="'{\"schemaVersion\": 1, \"label\": \"coverage\", \"message\": \"${PERCENT} %\", \"color\": \"${COLOR}\"}'"
+echo -e "\nUpdating Coverage Badge:";
 
-curl --header "Content-Type: application/json" \
+curl https://www.badges.barthy.koeln/badge/image-upload-bundle/coverage \
+  --header "Content-Type: application/json" \
   --header "X-Auth-Token: ${BADGE_TOKEN}" \
   --request POST \
-  --data ${BADGE} \
-  https://www.badges.barthy.koeln/badge/image-upload-bundle/coverage
+  --data @<(
+  cat <<EOF
+    {
+        "schemaVersion": 1,
+        "label": "coverage",
+        "message": "${PERCENT} %",
+        "color": "$COLOR"
+    }
+EOF
+    )
+
+echo -e "\n\n";
 
 exit 0
