@@ -24,6 +24,6 @@ curl --header "Content-Type: application/json" \
   --header "X-Auth-Token: ${BADGE_TOKEN}" \
   --request POST \
   --data ${BADGE} \
-  https://badges.barthy.koeln/badge/image-upload-bundle/coverage
+  https://www.badges.barthy.koeln/badge/image-upload-bundle/coverage
 
 exit 0
