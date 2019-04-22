@@ -1,9 +1,11 @@
 version: 2
 jobs:
-  build:
+  test:
     docker:
       - image: circleci/php:7.3.2-cli-stretch
-    working_directory: ~/barthy
+    environment:
+      BADGE_TOKEN: c8da67c0-962c-46da-841a-d77b0ad34991
+    working_directory: ~/image-upload-bundle
     steps:
       - checkout
       - run: sudo docker-php-ext-install zip
@@ -12,9 +14,9 @@ jobs:
           keys:
             - composer-v1-{{ checksum "composer.lock" }}
             - composer-v1-
-      - run: composer install -n --prefer-dist
+      - run: composer install -n --prefer-dist --no-scripts
       - save_cache:
           key: composer-v1-{{ checksum "composer.lock" }}
           paths:
             - vendor
-      - run: ./vendor/bin/phpunit ./test --coverage-text --colors=never
+      - run: ~/image-upload-bundle/scripts/tests-with-coverage.sh

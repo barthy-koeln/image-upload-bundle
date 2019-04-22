@@ -1,5 +1,8 @@
 # Image Upload Bundle
 
+[![CircleCI](https://circleci.com/gh/BarthyB/image-upload-bundle/tree/master.svg?style=svg&circle-token=ee369ca101a5ae0c8b1b3d32e1ca7a4e4e8043c6)](https://circleci.com/gh/BarthyB/image-upload-bundle/tree/master)
+[![coverage](https://img.shields.io/endpoint.svg?url=<URL>&style=flat)](https://circleci.com/gh/BarthyB/image-upload-bundle/tree/master)
+
 This bundle provides commonly used functions to upload and handle images in symfony applications.
 It primarily is meant to work with [barthy/admin-bundle](httsp://github.com/BarthyB/admin-bundle).
 
