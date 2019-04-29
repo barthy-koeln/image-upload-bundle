@@ -15,8 +15,8 @@ This bundle provides …
 - an `Image` entity that has fields for file metadata (mime type, dimensions), sorting, cropping, and translating. 
 - translations of "title" and "alt" tags using the [prezent/doctrine-translatable-bundle](https://github.com/prezent/doctrine-translation-bundle)  
 - file name handling using the [barthy/slug-filename-bundle](https://github.com/BarthyB/slug-filename-bundle)
-- cache handling for the [liip/imagine-bundle](https://github.com/liip/imagine-bundle)
-- twig functions to create thumbnails using the [liip/imagine-bundle](https://github.com/liip/imagine-bundle)
+- cache handling for the [liip/LiipImagineBundle](https://github.com/liip/LiipImagineBundle)
+- twig functions to create thumbnails using the [liip/LiipImagineBundle](https://github.com/liip/LiipImagineBundle)
 - error and assertion handling
 - configurable maximum file size and file name language
 - form types for basic image upload, image collections and sortable image collections
@@ -76,7 +76,7 @@ barthy_image_upload:
 ```php
 <?php
 
-use Barthy\ImageUploadBundle\FileSizeEntity\Image;
+use Barthy\ImageUploadBundle\Entity\Image;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -117,7 +117,7 @@ class Project
 ```php
 <?php
 
-use Barthy\ImageUploadBundle\FileSizeEntity\Image;
+use Barthy\ImageUploadBundle\Entity\Image;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -259,3 +259,22 @@ class ProjectAdminType extends AbstractType
 
 - `cropper_aspect_width`, `cropper_aspect_height`: as mentioned above
 - `sortable`: `true` or `false`, enables a hidden field `position` with the class `sortable-field`
+
+### Twig
+
+The `thumbnailParams` function creates an array that can be used with the [liip/LiipImagineBundle](https://github.com/liip/LiipImagineBundle).
+
+```twig
+{% set runtimeConfig = image|thumbnailParams(500, 400) %}
+<img class="img-fluid"
+     data-index="{{ loop.index0 }}"
+     data-full-src="{{ asset('/uploads/images/' ~ image)|imagine_filter('compression') }}"
+     data-full-dimensions="{{ image.dimensions|json_encode|e }}"
+     src="{{ asset('/uploads/images/' ~ image)|imagine_filter('compression', runtimeConfig) }}"
+     title="{{ image.title }}"
+     alt="{{ image.alt }}"
+>
+```
+
+- `width`, `height`: the final thumbnail size
+- `mode`: either "inset" or "outbound" ([see the symfony docs for more detail](https://symfony.com/doc/master/bundles/LiipImagineBundle/filters/sizing.html#thumbnail-options))

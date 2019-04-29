@@ -18,16 +18,16 @@ class ImageFilterExtension extends AbstractExtension
 
     public function getFilters(): array
     {
-        return array(
+        return [
             new TwigFilter('thumbnailParams', [$this, 'thumbnailParams']),
-        );
+        ];
     }
 
-    public function thumbnailParams(Image $image, int $w, int $h, string $mode = 'outbound')
+    public function thumbnailParams(Image $image, int $width, int $height, string $mode = 'outbound'): array
     {
         $params = [
-            'crop' => [
-                'size' => [
+            'crop'      => [
+                'size'  => [
                     $image->getW(),
                     $image->getH(),
                 ],
@@ -38,8 +38,8 @@ class ImageFilterExtension extends AbstractExtension
             ],
             'thumbnail' => [
                 'size' => [
-                    $w,
-                    $h,
+                    $width,
+                    $height,
                 ],
                 'mode' => $mode,
             ],
