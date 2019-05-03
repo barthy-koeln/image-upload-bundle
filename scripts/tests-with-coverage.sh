@@ -24,7 +24,7 @@ echo -e "Color: ${COLOR}";
 
 if [[ ! -z ${PERCENT} ]]; then
 
-    curl https://www.badges.barthy.koeln/badge/image-upload-bundle/coverage \
+    curl https://badges.barthy.koeln/badge/image-upload-bundle/coverage \
       --header "Content-Type: application/json" \
       --header "X-Auth-Token: ${BADGE_TOKEN}" \
       --request POST \

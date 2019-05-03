@@ -158,7 +158,7 @@ class Image extends AbstractTranslatable implements SlugFileNameInterface
     /**
      * @param string $fileName
      */
-    public function setFileName(?string $fileName): void
+    public function setFileName(string $fileName): void
     {
         $this->fileName = $fileName;
     }
@@ -337,10 +337,10 @@ class Image extends AbstractTranslatable implements SlugFileNameInterface
         } else {
             return json_encode(
                 [
-                    "x" => $this->getX(),
-                    "y" => $this->getY(),
-                    "width" => $this->getW(),
-                    "height" => $this->getH(),
+                    "x"        => $this->getX(),
+                    "y"        => $this->getY(),
+                    "width"    => $this->getW(),
+                    "height"   => $this->getH(),
                     "original" => $this->getDimensions(),
                 ]
             );
