@@ -64,7 +64,7 @@ class ImageTypeTest extends KernelTestCase
         self::bootKernel();
         self::$fileSystem = self::$container->get('filesystem');
 
-        self::$fileSystem->mkdir(self::$kernel->getProjectDir().'/test/public/uploads/images', 0774);
+        self::$fileSystem->mkdir(self::$kernel->getProjectDir().'/tests/public/uploads/images', 0774);
 
         parent::setUpBeforeClass();
     }
@@ -113,7 +113,7 @@ class ImageTypeTest extends KernelTestCase
 
     private static function getValidDataSet()
     {
-        $basePath = self::$kernel->getProjectDir().'/test/Fixtures/Files/';
+        $basePath = self::$kernel->getProjectDir().'/tests/Fixtures/Files/';
         $fileName = 'small_image.jpg';
 
         $copyFileName = "cp-".$fileName;
@@ -226,7 +226,7 @@ class ImageTypeTest extends KernelTestCase
         $object = self::getArrayCollection($formData);
         $this->submitForm($object, $objectToCompare, $formData);
 
-        self::assertFileExists(self::$kernel->getProjectDir().'/test/public/uploads/images/test.jpeg');
+        self::assertFileExists(self::$kernel->getProjectDir().'/tests/public/uploads/images/test.jpeg');
 
         /**
          * @var Image $persistedImage
@@ -249,8 +249,8 @@ class ImageTypeTest extends KernelTestCase
 
         $this->submitForm($object, $objectToCompare, $formData);
 
-        self::assertFileNotExists(self::$kernel->getProjectDir().'/test/public/uploads/images/test.jpeg');
-        self::assertFileExists(self::$kernel->getProjectDir().'/test/public/uploads/images/anderer-titel.jpeg');
+        self::assertFileNotExists(self::$kernel->getProjectDir().'/tests/public/uploads/images/test.jpeg');
+        self::assertFileExists(self::$kernel->getProjectDir().'/tests/public/uploads/images/anderer-titel.jpeg');
 
         $formData[0]['y'] = 100;
         $object->get('0')->setY('100');
@@ -266,7 +266,6 @@ class ImageTypeTest extends KernelTestCase
         $object->get('0')->setH('300');
 
         $this->submitForm($object, $objectToCompare, $formData);
-
     }
 
     /**
@@ -394,7 +393,7 @@ class ImageTypeTest extends KernelTestCase
 
     public static function tearDownAfterClass()
     {
-        self::$fileSystem->remove(self::$kernel->getProjectDir().'/test/public');
+        self::$fileSystem->remove(self::$kernel->getProjectDir().'/tests/public');
         self::$fileSystem = null;
         parent::tearDownAfterClass();
     }

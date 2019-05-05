@@ -2,7 +2,7 @@ parameters:
   locale: 'de'
   locales: ['de', 'en']
   image_path_prefix: '/uploads/images'
-  image_upload_path: '%kernel.project_dir%/test/public%image_path_prefix%'
+  image_upload_path: '%kernel.project_dir%/tests/public%image_path_prefix%'
   router.request_context.host: example.org
   router.request_context.scheme: https
   router.request_context.base_url: /
