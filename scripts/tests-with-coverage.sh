@@ -6,7 +6,7 @@ set -o nounset
 # Use the error status of the first failure, rather than that of the last item in a pipeline.
 set -o pipefail
 
-PERCENT=$(./vendor/bin/phpunit ./test --coverage-text --colors=never | tee /dev/tty | grep -Eo --color=never '^\s*Lines:\s*([[:digit:]]+)' | grep -Eo --color=never '([[:digit:]]+)')
+PERCENT=$(./vendor/bin/phpunit ./tests --coverage-text --colors=never | tee /dev/tty | grep -Eo --color=never '^\s*Lines:\s*([[:digit:]]+)' | grep -Eo --color=never '([[:digit:]]+)')
 
 if [[ ${PERCENT} -gt 75 ]]; then
     COLOR=green
