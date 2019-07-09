@@ -30,42 +30,44 @@ class ImageCollectionType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $prepend = $this->translator->trans('image.collection.prepend', [], 'barthy_admin');
-        $append = $this->translator->trans('image.collection.append', [], 'barthy_admin');
-        $add = $this->translator->trans('image.collection.add', [], 'barthy_admin');
+        $prepend = $this->translator->trans('image.collection.prepend', [], 'barthy_image_upload');
+        $append = $this->translator->trans('image.collection.append', [], 'barthy_image_upload');
+        $add = $this->translator->trans('image.collection.add', [], 'barthy_image_upload');
+        $sort = $this->translator->trans('image.collection.sort', [], 'barthy_image_upload');
 
         $resolver->setDefaults(
             [
-                'accept' => 'image/jpeg',
-                'cropper_aspect_width' => null,
+                'accept'                => 'image/jpeg',
+                'cropper_aspect_width'  => null,
                 'cropper_aspect_height' => null,
-                'sortable' => false,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'translation_domain' => 'admin',
-                'label' => 'article.images.label',
+                'sortable'              => false,
+                'allow_add'             => true,
+                'allow_delete'          => true,
+                'translation_domain'    => 'admin',
+                'label'                 => 'article.images.label',
                 'prototype_placeholder' => '_images_',
-                'entry_type' => function (Options $options) {
+                'entry_type'            => function (Options $options) {
                     return $options['sortable'] ? SortableImageUploadType::class : ImageUploadType::class;
                 },
-                'prototype_name' => function (Options $options) {
+                'prototype_name'        => function (Options $options) {
                     return $options['prototype_placeholder'];
                 },
-                'attr' => function (Options $options) use ($prepend, $append, $add) {
+                'attr'                  => function (Options $options) use ($prepend, $append, $add, $sort) {
                     return [
-                        'class' => 'vue-collection',
-                        'data-prepend-title' => $prepend,
-                        'data-append-title' => $append,
-                        'data-add-title' => $add,
-                        'data-sortable' => 'true',
+                        'class'                      => 'vue-collection',
+                        'data-prepend-title'         => $prepend,
+                        'data-append-title'          => $append,
+                        'data-add-title'             => $add,
+                        'data-sort-title'            => $sort,
+                        'data-sortable'              => 'true',
                         'data-prototype-placeholder' => $options['prototype_placeholder'],
                     ];
                 },
-                'entry_options' => function (Options $options) {
+                'entry_options'         => function (Options $options) {
                     return [
-                        'label' => false,
-                        'accept' => $options['accept'],
-                        'cropper_aspect_width' => $options['cropper_aspect_width'],
+                        'label'                 => false,
+                        'accept'                => $options['accept'],
+                        'cropper_aspect_width'  => $options['cropper_aspect_width'],
                         'cropper_aspect_height' => $options['cropper_aspect_height'],
                     ];
                 },

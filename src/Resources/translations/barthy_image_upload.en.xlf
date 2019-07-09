@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="de">
     <file id="barthy_image_upload.de">
+        <unit id="0" name="image.collection.prepend">
+            <segment>
+                <source>image.collection.prepend</source>
+                <target>Prepend photo</target>
+            </segment>
+        </unit>
+        <unit id="1" name="image.collection.append">
+            <segment>
+                <source>image.collection.append</source>
+                <target>Append photo</target>
+            </segment>
+        </unit>
+        <unit id="2" name="image.collection.add">
+            <segment>
+                <source>image.collection.add</source>
+                <target>Add photo</target>
+            </segment>
+        </unit>
         <unit id="IDknSPSRGuzfzmLF" name="image.title.not_empty">
             <segment>
                 <source>image.title.not_empty</source>
@@ -29,6 +47,12 @@
             <segment>
                 <source>file_size_constraint.message</source>
                 <target>The file must not be bigger than %size% bytes.</target>
+            </segment>
+        </unit>
+        <unit id="3">
+            <segment>
+                <source>image.collection.sort</source>
+                <target>Sort Mode</target>
             </segment>
         </unit>
     </file>
