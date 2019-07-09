@@ -148,6 +148,9 @@ class ImageUploadType extends AbstractType
                                 'label' => false,
                                 'required' => false,
                                 'error_bubbling' => false,
+                                'attr' => [
+                                    'class' => 'sort-hidden'
+                                ],
                                 'fields' => [
                                     'title' => [
                                         'field_type' => TextType::class,
