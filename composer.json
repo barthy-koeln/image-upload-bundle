@@ -43,7 +43,7 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/BarthyB/slug-filename-bundle.git"
+      "url": "https://github.com/barthy-koeln/slug-filename-bundle.git"
     }
   ],
   "autoload": {
