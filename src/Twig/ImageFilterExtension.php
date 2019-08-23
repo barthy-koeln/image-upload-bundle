@@ -23,10 +23,14 @@ class ImageFilterExtension extends AbstractExtension
         ];
     }
 
-    public function thumbnailParams(Image $image, int $width, int $height, string $mode = 'outbound'): array
-    {
+    public function thumbnailParams(
+        Image $image,
+        ?int $width = null,
+        ?int $height = null,
+        string $mode = 'outbound'
+    ): array {
         $params = [
-            'crop'      => [
+            'crop' => [
                 'size'  => [
                     $image->getW(),
                     $image->getH(),
@@ -36,14 +40,17 @@ class ImageFilterExtension extends AbstractExtension
                     $image->getY(),
                 ],
             ],
-            'thumbnail' => [
+        ];
+
+        if (null !== $width && null !== $height) {
+            $params['thumbnail'] = [
                 'size' => [
                     $width,
                     $height,
                 ],
                 'mode' => $mode,
-            ],
-        ];
+            ];
+        }
 
         return $params;
     }
