@@ -14,7 +14,6 @@ use Exception;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Prezent\Doctrine\Translatable\Annotation as Prezent;
 use Prezent\Doctrine\Translatable\Entity\AbstractTranslatable;
-use Prezent\Doctrine\Translatable\Entity\AbstractTranslation;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -240,14 +239,6 @@ class Image extends AbstractTranslatable implements SlugFileNameInterface
     }
 
     /**
-     * @return AbstractTranslation
-     */
-    function createNewTranslation()
-    {
-        return new ImageTranslation();
-    }
-
-    /**
      * @Assert\Callback
      *
      * @param ExecutionContextInterface $context
@@ -381,9 +372,7 @@ class Image extends AbstractTranslatable implements SlugFileNameInterface
 
     public function getSlugFieldValue(string $locale): ?string
     {
-        $this->setCurrentLocale($locale);
-
-        return $this->getTitle();
+        return $this->getTitle($locale);
     }
 
     public function getSlugFieldName(): string
@@ -393,8 +382,7 @@ class Image extends AbstractTranslatable implements SlugFileNameInterface
 
     public function getSlug(string $locale): ?string
     {
-        $this->setCurrentLocale($locale);
-        $slug = mb_strtolower($this->getTitle());
+        $slug = mb_strtolower($this->getTitle($locale));
         $slugify = new Slugify();
         $slug = $slugify->slugify($slug);
 

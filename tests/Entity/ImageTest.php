@@ -213,7 +213,6 @@ class ImageTest extends KernelTestCase
      * @covers \Barthy\ImageUploadBundle\Entity\Image::addTranslation
      * @covers \Barthy\ImageUploadBundle\Entity\Image::getAlt
      * @covers \Barthy\ImageUploadBundle\Entity\Image::getTitle
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::createNewTranslation
      * @covers \Barthy\ImageUploadBundle\Entity\ImageTranslation::setLocale
      * @covers \Barthy\ImageUploadBundle\Entity\ImageTranslation::setTitle
      * @covers \Barthy\ImageUploadBundle\Entity\ImageTranslation::getTitle
@@ -239,14 +238,8 @@ class ImageTest extends KernelTestCase
         self::assertEquals('test', $currentTranslation->getAlt());
         self::assertEquals('äöüßéèê', $currentTranslation->getTitle());
 
-        $this->image->setCurrentLocale('de');
-        self::assertEquals('test', $this->image->getAlt());
-        self::assertEquals('äöüßéèê', $this->image->getTitle());
-
         self::assertEquals('test', $this->image->getAlt('de'));
         self::assertEquals('äöüßéèê', $this->image->getTitle('de'));
-
-        self::assertInstanceOf(ImageTranslation::class, $this->image->createNewTranslation());
     }
 
     /**

@@ -134,17 +134,17 @@ class ImageTypeTest extends KernelTestCase
                 'translations' => [
                     'de' => [
                         'title' => 'Test',
-                        'alt' => 'Testing',
+                        'alt'   => 'Testing',
                     ],
                 ],
-                'imageFile' => [
+                'imageFile'    => [
                     'file' => $file,
                 ],
-                'position' => 0,
-                'x' => 0,
-                'y' => 0,
-                'w' => 1280,
-                'h' => 720,
+                'position'     => 0,
+                'x'            => 0,
+                'y'            => 0,
+                'w'            => 1280,
+                'h'            => 720,
             ],
         ];
     }
@@ -244,7 +244,6 @@ class ImageTypeTest extends KernelTestCase
         $object->get('0')->setMimeType($persistedImage->getMimeType());
         $object->get('0')->setDimensions($persistedImage->getDimensions());
 
-        $object->get('0')->setCurrentLocale('de');
         $object->get('0')->translate('de')->setTitle('Anderer Titel');
 
         $this->submitForm($object, $objectToCompare, $formData);
@@ -344,7 +343,7 @@ class ImageTypeTest extends KernelTestCase
             ImageCollectionType::class,
             $objectToCompare,
             [
-                'sortable' => true,
+                'sortable'              => true,
                 'cropper_aspect_height' => 2,
             ]
         );
@@ -363,7 +362,7 @@ class ImageTypeTest extends KernelTestCase
             ImageCollectionType::class,
             $objectToCompare,
             [
-                'sortable' => true,
+                'sortable'             => true,
                 'cropper_aspect_width' => 2,
             ]
         );
@@ -388,12 +387,13 @@ class ImageTypeTest extends KernelTestCase
         $this->propertyMappingFactory = null;
         $this->formFactory = null;
 
+        self::$fileSystem->remove(self::$kernel->getProjectDir().'/tests/public');
+
         parent::tearDown();
     }
 
     public static function tearDownAfterClass()
     {
-        self::$fileSystem->remove(self::$kernel->getProjectDir().'/tests/public');
         self::$fileSystem = null;
         parent::tearDownAfterClass();
     }

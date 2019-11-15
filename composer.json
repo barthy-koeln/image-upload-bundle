@@ -22,7 +22,7 @@
     "ext-iconv": "*",
     "ext-json": "*",
     "a2lix/translation-form-bundle": "^3.0",
-    "barthy/cached-prezent-translation": "^0.1",
+    "barthy/cached-prezent-translation": "^1.0",
     "barthy/slug-filename-bundle": "^0.1",
     "cocur/slugify": "^3.2",
     "liip/imagine-bundle": "^2.1",
@@ -44,6 +44,10 @@
     {
       "type": "vcs",
       "url": "https://github.com/barthy-koeln/slug-filename-bundle.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/barthy-koeln/cached-prezent-translation.git"
     }
   ],
   "autoload": {

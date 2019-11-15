@@ -9,6 +9,7 @@
 namespace Barthy\ImageUploadBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Locale;
 use Prezent\Doctrine\Translatable\Annotation as Prezent;
 use Prezent\Doctrine\Translatable\Entity\AbstractTranslation;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -45,7 +46,7 @@ class ImageTranslation extends AbstractTranslation
      */
     public function validate(ExecutionContextInterface $context)
     {
-        $localeDisplayName = \Locale::getDisplayLanguage($this->getLocale());
+        $localeDisplayName = Locale::getDisplayLanguage($this->getLocale());
 
         if (empty($this->getTitle())) {
             $context
