@@ -2,7 +2,7 @@
 
 namespace Barthy\ImageUploadBundle\Test\Twig;
 
-use Barthy\ImageUploadBundle\Entity\Image;
+use Barthy\ImageUploadBundle\Tests\Entity\SpecificImage;
 use Barthy\ImageUploadBundle\Twig\ImageFilterExtension;
 use PHPUnit\Framework\TestCase;
 
@@ -34,7 +34,7 @@ class ImageFilterExtensionTest extends TestCase
      */
     public function testThumbnailParamsFilter()
     {
-        $image = new Image();
+        $image = new SpecificImage();
         $image->setX(10);
         $image->setY(20);
         $image->setW(500);

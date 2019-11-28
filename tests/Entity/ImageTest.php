@@ -8,18 +8,20 @@
 
 namespace Barthy\ImageUploadBundle\Test\Entity;
 
-use Barthy\ImageUploadBundle\Entity\Image;
 use Barthy\ImageUploadBundle\Entity\ImageTranslationTrait;
+use Barthy\ImageUploadBundle\Tests\Entity\SpecificImage;
+use Barthy\ImageUploadBundle\Tests\Entity\SpecificImageTranslation;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\File\File;
 
+
 class ImageTest extends KernelTestCase
 {
 
     /**
-     * @var Image
+     * @var SpecificImage
      */
     protected $image;
 
@@ -27,7 +29,7 @@ class ImageTest extends KernelTestCase
     {
         self::bootKernel();
 
-        $this->image = new Image();
+        $this->image = new SpecificImage();
 
         parent::setUp();
     }
@@ -48,7 +50,7 @@ class ImageTest extends KernelTestCase
      */
     public function testGetSlug()
     {
-        $translation = new ImageTranslationTrait();
+        $translation = new SpecificImageTranslation();
 
         $translation->setLocale('de');
         $translation->setTitle('äöüßéèê');
@@ -78,10 +80,10 @@ class ImageTest extends KernelTestCase
         self::assertEquals(
             json_encode(
                 [
-                    "x" => 5,
-                    "y" => 10,
-                    "width" => 500,
-                    "height" => 1000,
+                    "x"        => 5,
+                    "y"        => 10,
+                    "width"    => 500,
+                    "height"   => 1000,
                     "original" => [1920, 1080],
                 ]
             ),
@@ -221,7 +223,7 @@ class ImageTest extends KernelTestCase
      */
     public function testTranslations()
     {
-        $translation = new ImageTranslationTrait();
+        $translation = new SpecificImageTranslation();
         $translation->setLocale('de');
         $translation->setTitle('äöüßéèê');
         $translation->setAlt('test');
@@ -257,7 +259,7 @@ class ImageTest extends KernelTestCase
         $violations = $validator->validate($this->image);
         $this->assertEquals(2, $violations->count());
 
-        $translation = new ImageTranslationTrait();
+        $translation = new SpecificImageTranslation();
         $translation->setLocale('de');
         $translation->setTitle('äöüßéèê');
         $translation->setAlt('test');
@@ -272,7 +274,7 @@ class ImageTest extends KernelTestCase
         $violations = $validator->validate($this->image);
         $this->assertEquals(0, $violations->count());
 
-        $translation = new ImageTranslationTrait();
+        $translation = new SpecificImageTranslation();
         $translation->setLocale('en');
         $this->image->addTranslation($translation);
 

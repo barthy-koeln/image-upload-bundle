@@ -4,7 +4,6 @@ namespace Barthy\ImageUploadBundle\Form;
 
 use A2lix\TranslationFormBundle\Form\Type\TranslationsType;
 use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
-use Barthy\ImageUploadBundle\Entity\Image;
 use Barthy\SlugFilenameBundle\DependencyInjection\SlugFilenameSubscriberFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
@@ -80,7 +79,7 @@ class ImageUploadType extends AbstractType
                 function (FormEvent $event) use ($options) {
 
                     /**
-                     * @var Image $entity
+                     * @var \Barthy\ImageUploadBundle\Entity\ImageInterface $entity
                      */
                     $entity = $event->getData();
                     $nullImage = $entity === null || $entity->getFileName() === null;
@@ -188,7 +187,7 @@ class ImageUploadType extends AbstractType
     public function preSubmit(FormEvent $event)
     {
         /**
-         * @var Image $image
+         * @var \Barthy\ImageUploadBundle\Entity\ImageInterface $image
          */
         $image = $event->getForm()->getData();
 
@@ -220,7 +219,7 @@ class ImageUploadType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class'            => Image::class,
+                'data_class'            => $this->imageUploadConfig->getImageClass(),
                 'accept'                => 'image/jpeg',
                 'cropper_aspect_width'  => null,
                 'cropper_aspect_height' => null,

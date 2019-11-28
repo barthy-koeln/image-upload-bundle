@@ -9,7 +9,7 @@
 namespace Barthy\ImageUploadBundle\Twig;
 
 
-use Barthy\ImageUploadBundle\Entity\Image;
+use Barthy\ImageUploadBundle\Entity\ImageInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
@@ -24,7 +24,7 @@ class ImageFilterExtension extends AbstractExtension
     }
 
     public function thumbnailParams(
-        Image $image,
+        ImageInterface $image,
         ?int $width = null,
         ?int $height = null,
         string $mode = 'outbound'

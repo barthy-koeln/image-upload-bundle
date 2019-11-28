@@ -4,15 +4,17 @@ namespace Barthy\ImageUploadBundle\Form;
 
 
 use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
-use Barthy\ImageUploadBundle\Entity\Image;
-use Barthy\ImageUploadBundle\Entity\ImageTranslationTrait;
+use Barthy\ImageUploadBundle\Tests\Entity\SpecificImage;
+use Barthy\ImageUploadBundle\Tests\Entity\SpecificImageTranslation;
 use Barthy\SlugFilenameBundle\DependencyInjection\SlugFilenameSubscriberFactory;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\OptionsResolver\Exception\OptionDefinitionException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
 class ImageTypeTest extends KernelTestCase
@@ -73,9 +75,9 @@ class ImageTypeTest extends KernelTestCase
     {
         self::bootKernel();
 
-        $this->translator = self::$container->get('translator');
+        $this->translator = self::$container->get(TranslatorInterface::class);
         $this->cacheManager = self::$container->get('liip_imagine.cache.manager');
-        $this->entityManager = self::$container->get('doctrine.orm.entity_manager');
+        $this->entityManager = self::$container->get(EntityManagerInterface::class);
         $this->imageUploadConfig = self::$container->get(ImageUploadConfig::class);
         $this->slugFactory = self::$container->get(SlugFilenameSubscriberFactory::class);
         $this->propertyMappingFactory = self::$container->get(PropertyMappingFactory::class);
@@ -159,10 +161,10 @@ class ImageTypeTest extends KernelTestCase
     {
         $object = new ArrayCollection();
         foreach ($formData as $imageData) {
-            $image = new Image();
+            $image = new SpecificImage();
 
             foreach ($imageData['translations'] as $locale => $translationData) {
-                $translation = new ImageTranslationTrait();
+                $translation = new SpecificImageTranslation();
                 $translation->setLocale($locale);
                 $translation->setTitle($translationData['title']);
                 $translation->setAlt($translationData['alt']);
@@ -186,12 +188,12 @@ class ImageTypeTest extends KernelTestCase
     private static function sanitizeUpdatedAtDates(ArrayCollection &$object, ArrayCollection &$objectToCompare)
     {
         /**
-         * @var Image $firstImage
+         * @var SpecificImage $firstImage
          */
         $firstImage = $object->get(0);
 
         /**
-         * @var Image $firstImage
+         * @var SpecificImage $firstImage
          */
         $secondImage = $objectToCompare->get(0);
 
@@ -229,7 +231,7 @@ class ImageTypeTest extends KernelTestCase
         self::assertFileExists(self::$kernel->getProjectDir().'/tests/public/uploads/images/test.jpeg');
 
         /**
-         * @var Image $persistedImage
+         * @var SpecificImage $persistedImage
          */
         $persistedImage = $objectToCompare->get('0');
 
@@ -328,6 +330,8 @@ class ImageTypeTest extends KernelTestCase
                 $this->entityManager->persist($image);
             }
         }
+
+        $this->entityManager->flush();
     }
 
     /**

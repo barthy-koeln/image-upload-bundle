@@ -3,27 +3,17 @@
 namespace Barthy\ImageUploadBundle\Entity;
 
 use Barthy\ImageUploadBundle\Validator\FileSizeConstraint;
-use Barthy\ImageUploadBundle\Validator\FileTitleConstraint;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-/**
- * @FileTitleConstraint()
- * @ORM\MappedSuperclass()
- * @package Barthy\ImageUploadBundle\Entity
- * @Vich\Uploadable
- */
-class Image
+trait ImageTrait
 {
-
-    use TimestampableEntity;
 
     /**
      * Mapping provided by implementation
@@ -139,22 +129,6 @@ class Image
     public function setFileName(?string $fileName): void
     {
         $this->fileName = $fileName;
-    }
-
-    /**
-     * @return DateTime
-     */
-    public function getUpdatedAt(): ?DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param DateTime $updatedAt
-     */
-    public function setUpdatedAt(DateTime $updatedAt): void
-    {
-        $this->updatedAt = $updatedAt;
     }
 
     /**

@@ -34,6 +34,11 @@ class AppKernel extends Kernel
         return $bundles;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Loader\LoaderInterface $loader
+     *
+     * @throws \Exception
+     */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         // We don't need that Environment stuff, just one config

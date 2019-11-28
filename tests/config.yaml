@@ -25,6 +25,7 @@ framework:
 barthy_image_upload:
   max_file_size: 2M
   file_name_language: '%locale%'
+  image_class: Barthy\ImageUploadBundle\Tests\Entity\SpecificImage
 
 vich_uploader:
   db_driver: orm
@@ -59,9 +60,8 @@ doctrine:
       App:
         is_bundle: false
         type: annotation
-        dir: '%kernel.project_dir%/src/Entity'
-        prefix: 'App\Entity'
-        alias: App
+        dir: '%kernel.project_dir%/tests/Entity'
+        prefix: 'Barthy\ImageUploadBundle\Tests\Entity'
 
 liip_imagine:
   resolvers:

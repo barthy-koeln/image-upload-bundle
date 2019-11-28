@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 trait ImageTranslationTrait
 {
 
-    abstract function getLocale(): ?string;
+    abstract function getLocale();
 
     /**
      * @var string

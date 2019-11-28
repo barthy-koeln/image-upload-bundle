@@ -62,6 +62,9 @@ class FileSizeConstraintTest extends KernelTestCase
      */
     public function testInjection()
     {
+        /**
+         * @var ImageUploadConfig $config
+         */
         $config = self::$container->get(ImageUploadConfig::class);
         $validator = new FileSizeConstraintValidator($config);
 

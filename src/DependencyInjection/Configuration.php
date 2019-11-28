@@ -22,16 +22,18 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('barthy_image_upload');
+        $treeBuilder = new TreeBuilder('barthy_image_upload');
 
-        $rootNode
+        $treeBuilder->getRootNode()
             ->children()
                 ->scalarNode('file_name_language')
                     ->defaultValue('en')
                 ->end()
                 ->scalarNode('max_file_size')
                     ->defaultValue('2M')
+                ->end()
+                ->scalarNode('image_class')
+                    ->isRequired(true)
                 ->end()
             ->end();
 
