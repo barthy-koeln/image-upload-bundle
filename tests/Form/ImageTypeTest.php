@@ -5,7 +5,7 @@ namespace Barthy\ImageUploadBundle\Form;
 
 use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
 use Barthy\ImageUploadBundle\Entity\Image;
-use Barthy\ImageUploadBundle\Entity\ImageTranslation;
+use Barthy\ImageUploadBundle\Entity\ImageTranslationTrait;
 use Barthy\SlugFilenameBundle\DependencyInjection\SlugFilenameSubscriberFactory;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -162,7 +162,7 @@ class ImageTypeTest extends KernelTestCase
             $image = new Image();
 
             foreach ($imageData['translations'] as $locale => $translationData) {
-                $translation = new ImageTranslation();
+                $translation = new ImageTranslationTrait();
                 $translation->setLocale($locale);
                 $translation->setTitle($translationData['title']);
                 $translation->setAlt($translationData['alt']);

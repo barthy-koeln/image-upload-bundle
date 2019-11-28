@@ -11,7 +11,7 @@ namespace Barthy\ImageUploadBundle\Validator;
 
 use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
 use Barthy\ImageUploadBundle\Entity\Image;
-use Barthy\ImageUploadBundle\Entity\ImageTranslation;
+use Barthy\ImageUploadBundle\Entity\ImageTranslationTrait;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -40,7 +40,7 @@ class FileTitleConstraintValidator extends ConstraintValidator
         $locale = $this->config->getFileNameLanguage();
 
         /**
-         * @var ImageTranslation $trans
+         * @var ImageTranslationTrait $trans
          */
         $trans = $value->getTranslations()->get($locale);
 

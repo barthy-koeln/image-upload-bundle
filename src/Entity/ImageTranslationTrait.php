@@ -10,23 +10,17 @@ namespace Barthy\ImageUploadBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Locale;
-use Prezent\Doctrine\Translatable\Annotation as Prezent;
-use Prezent\Doctrine\Translatable\Entity\AbstractTranslation;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * Class ImageTranslation
+ * Class ImageTranslationTrait
  * @package Barthy\ImageUploadBundle\Entity
- * @ORM\Entity
  */
-class ImageTranslation extends AbstractTranslation
+trait ImageTranslationTrait
 {
 
-    /**
-     * @Prezent\Translatable(targetEntity="Barthy\ImageUploadBundle\Entity\Image")
-     */
-    protected $translatable;
+    abstract function getLocale(): ?string;
 
     /**
      * @var string

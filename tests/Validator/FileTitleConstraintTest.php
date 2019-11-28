@@ -4,7 +4,7 @@ namespace Barthy\ImageUploadBundle\Test\Validator;
 
 use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
 use Barthy\ImageUploadBundle\Entity\Image;
-use Barthy\ImageUploadBundle\Entity\ImageTranslation;
+use Barthy\ImageUploadBundle\Entity\ImageTranslationTrait;
 use Barthy\ImageUploadBundle\Validator\FileTitleConstraint;
 use Barthy\ImageUploadBundle\Validator\FileTitleConstraintValidator;
 use ReflectionClass;
@@ -43,9 +43,9 @@ class FileTitleConstraintTest extends KernelTestCase
         $this->assertEquals(1, $violations->count());
 
         /**
-         * @var  ImageTranslation $translation
+         * @var  ImageTranslationTrait $translation
          */
-        $translation = new ImageTranslation();
+        $translation = new ImageTranslationTrait();
         $translation->setTitle('something');
         $translation->setLocale('de');
 

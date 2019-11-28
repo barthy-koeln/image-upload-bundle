@@ -2,18 +2,12 @@
 
 namespace Barthy\ImageUploadBundle\Entity;
 
-use Barthy\CachedPrezentTranslation\CachedPrezentTranslationTrait;
 use Barthy\ImageUploadBundle\Validator\FileSizeConstraint;
 use Barthy\ImageUploadBundle\Validator\FileTitleConstraint;
-use Barthy\SlugFilenameBundle\Entity\SlugFileNameInterface;
-use Cocur\Slugify\Slugify;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Prezent\Doctrine\Translatable\Annotation as Prezent;
-use Prezent\Doctrine\Translatable\Entity\AbstractTranslatable;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -22,29 +16,19 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @FileTitleConstraint()
- * @ORM\Entity
+ * @ORM\MappedSuperclass()
  * @package Barthy\ImageUploadBundle\Entity
  * @Vich\Uploadable
  */
-class Image extends AbstractTranslatable implements SlugFileNameInterface
+class Image
 {
 
     use TimestampableEntity;
-    use CachedPrezentTranslationTrait;
 
     /**
-     * @var int
-     * @ORM\Id()
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * Mapping provided by implementation
      */
     protected $id;
-
-    /**
-     * @Prezent\Translations(targetEntity="Barthy\ImageUploadBundle\Entity\ImageTranslation")
-     * @Assert\Valid
-     */
-    protected $translations;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -105,11 +89,6 @@ class Image extends AbstractTranslatable implements SlugFileNameInterface
      * @ORM\Column(type="array", nullable=true)
      */
     private $dimensions;
-
-    public function __construct()
-    {
-        $this->translations = new ArrayCollection();
-    }
 
     /**
      * @return File
@@ -208,34 +187,6 @@ class Image extends AbstractTranslatable implements SlugFileNameInterface
     public function setMimeType(?string $mimeType): void
     {
         $this->mimeType = $mimeType;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getTitle(?string $locale = null): ?string
-    {
-        /**
-         * @var ImageTranslation $trans
-         */
-        $trans = $this->translate($locale);
-
-        return $trans->getTitle();
-    }
-
-    public function getAlt(?string $locale = null): ?string
-    {
-        /**
-         * @var ImageTranslation $trans
-         */
-        $trans = $this->translate($locale);
-
-        return $trans->getAlt();
     }
 
     /**
@@ -368,24 +319,5 @@ class Image extends AbstractTranslatable implements SlugFileNameInterface
     public function getDimensions(): ?array
     {
         return $this->dimensions;
-    }
-
-    public function getSlugFieldValue(string $locale): ?string
-    {
-        return $this->getTitle($locale);
-    }
-
-    public function getSlugFieldName(): string
-    {
-        return 'title';
-    }
-
-    public function getSlug(string $locale): ?string
-    {
-        $slug = mb_strtolower($this->getTitle($locale));
-        $slugify = new Slugify();
-        $slug = $slugify->slugify($slug);
-
-        return $slug;
     }
 }
