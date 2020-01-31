@@ -17,7 +17,7 @@
         <server name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
         <server name="APP_ENV" value="test"/>
         <server name="APP_SECRET" value="asfsaghaksnoafvjsvj9u01ruq90wjqnowqf0n1"/>
-        <server name="DATABASE_URL" value="mysql://root@127.0.0.1:3306/image-upload-bundle"/>
+        <server name="DATABASE_URL" value="mysql://bbonhomme@127.0.0.1:3306/image-upload-bundle"/>
     </php>
 
     <testsuites>
