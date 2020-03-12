@@ -5,6 +5,7 @@ namespace Barthy\ImageUploadBundle\Form;
 use A2lix\TranslationFormBundle\Form\Type\TranslationsType;
 use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
 use Barthy\SlugFilenameBundle\DependencyInjection\SlugFilenameSubscriberFactory;
+use Barthy\SlugFilenameBundle\Entity\SlugFileNameInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\Form\AbstractType;
@@ -141,52 +142,53 @@ class ImageUploadType extends AbstractType
                             ]
                         );
 
-                    if ($options['translations']){
+                    if ($options['translations']) {
                         $event->getForm()
-                        ->add(
-                            'translations',
-                            TranslationsType::class,
-                            [
-                                'label'          => false,
-                                'required'       => false,
-                                'error_bubbling' => false,
-                                'attr'           => [
-                                    'class' => 'sort-hidden',
-                                ],
-                                'fields'         => [
-                                    'title' => [
-                                        'field_type'         => TextType::class,
-                                        'label'              => 'image.title',
-                                        'translation_domain' => 'barthy_admin',
-                                        'error_bubbling'     => true,
+                            ->add(
+                                'translations',
+                                TranslationsType::class,
+                                [
+                                    'label' => false,
+                                    'required' => false,
+                                    'error_bubbling' => false,
+                                    'attr' => [
+                                        'class' => 'sort-hidden',
                                     ],
-                                    'alt'   => [
-                                        'field_type'         => TextType::class,
-                                        'label'              => 'image.alt',
-                                        'translation_domain' => 'barthy_admin',
-                                        'error_bubbling'     => true,
+                                    'fields' => [
+                                        'title' => [
+                                            'field_type' => TextType::class,
+                                            'label' => 'image.title',
+                                            'translation_domain' => 'barthy_admin',
+                                            'error_bubbling' => true,
+                                        ],
+                                        'alt' => [
+                                            'field_type' => TextType::class,
+                                            'label' => 'image.alt',
+                                            'translation_domain' => 'barthy_admin',
+                                            'error_bubbling' => true,
+                                        ],
                                     ],
-                                ],
-                            ]
-                        );
+                                ]
+                            );
 
                     }
                 }
             )
-            ->addEventSubscriber(
+            ->addEventListener(
+                FormEvents::PRE_SUBMIT,
+                [$this, 'preSubmit']
+            );
+
+        if ($options['slug_file_name']) {
+            $builder->addEventSubscriber(
                 $this->slugFilenameSubscriberFactory->create(
                     function ($entity, string $oldName, string $newname, string $uploadPath) {
                         $filePath = $uploadPath.'/'.$oldName;
                         $this->cacheManager->remove($filePath.'/'.$oldName);
                     }
                 )
-            )
-            ->addEventListener(
-                FormEvents::PRE_SUBMIT,
-                function (FormEvent $event) {
-                    $this->preSubmit($event);
-                }
             );
+        }
     }
 
     public function preSubmit(FormEvent $event)
@@ -245,6 +247,7 @@ class ImageUploadType extends AbstractType
                     }
                 },
                 'translations' => $metadata->hasAssociation('translations'),
+                'slug_file_name' => in_array(SlugFileNameInterface::class, class_implements($imageClass)),
             ]
         );
     }

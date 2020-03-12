@@ -33,7 +33,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('2M')
                 ->end()
                 ->scalarNode('image_class')
-                    ->isRequired(true)
+                    ->isRequired()
                 ->end()
             ->end();
 
