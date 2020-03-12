@@ -89,18 +89,18 @@ class ImageUploadType extends AbstractType
                             'imageFile',
                             VichImageType::class,
                             [
-                                'download_uri'       => false,
-                                'image_uri'          => true,
-                                'allow_delete'       => false,
-                                'error_bubbling'     => false,
+                                'download_uri' => false,
+                                'image_uri' => true,
+                                'allow_delete' => false,
+                                'error_bubbling' => false,
                                 'translation_domain' => 'barthy_admin',
-                                'label'              => false,
-                                'required'           => false,
-                                'attr'               => [
+                                'label' => false,
+                                'required' => false,
+                                'attr' => [
                                     'placeholder' => 'choose_file',
-                                    'file_name'   => $nullImage === false ? $entity->getFileName() : "",
-                                    'crop_data'   => $nullImage === false ? $entity->getJSONCropData() : "",
-                                    'accept'      => $options['accept'],
+                                    'file_name' => $nullImage === false ? $entity->getFileName() : "",
+                                    'crop_data' => $nullImage === false ? $entity->getJSONCropData() : "",
+                                    'accept' => $options['accept'],
                                 ],
                             ]
                         )
@@ -139,7 +139,10 @@ class ImageUploadType extends AbstractType
                                     'class' => 'crop-h',
                                 ],
                             ]
-                        )
+                        );
+
+                    if ($options['translations']){
+                        $event->getForm()
                         ->add(
                             'translations',
                             TranslationsType::class,
@@ -166,6 +169,8 @@ class ImageUploadType extends AbstractType
                                 ],
                             ]
                         );
+
+                    }
                 }
             )
             ->addEventSubscriber(
@@ -217,25 +222,29 @@ class ImageUploadType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
+        $imageClass = $this->imageUploadConfig->getImageClass();
+        $metadata = $this->entityManager->getClassMetadata($imageClass);
+
         $resolver->setDefaults(
             [
-                'data_class'            => $this->imageUploadConfig->getImageClass(),
-                'accept'                => 'image/jpeg',
-                'cropper_aspect_width'  => null,
+                'data_class' => $imageClass,
+                'accept' => 'image/jpeg',
+                'cropper_aspect_width' => null,
                 'cropper_aspect_height' => null,
-                'attr'                  => function (Options $options) {
+                'attr' => function (Options $options) {
                     if (null === $options['cropper_aspect_width'] xor null === $options['cropper_aspect_height']) {
                         throw new OptionDefinitionException(
                             "cropper.js is enabled, but only one aspect ratio option has been defined. Use both the 'cropper_aspect_width' and 'cropper_aspect_height' options."
                         );
                     } else {
                         return [
-                            'class'              => 'vue-image',
-                            'data-aspect-width'  => $options['cropper_aspect_width'],
+                            'class' => 'vue-image',
+                            'data-aspect-width' => $options['cropper_aspect_width'],
                             'data-aspect-height' => $options['cropper_aspect_height'],
                         ];
                     }
                 },
+                'translations' => $metadata->hasAssociation('translations'),
             ]
         );
     }
