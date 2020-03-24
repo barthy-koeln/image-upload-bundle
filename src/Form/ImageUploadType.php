@@ -5,6 +5,7 @@ namespace Barthy\ImageUploadBundle\Form;
 use A2lix\TranslationFormBundle\Form\Type\TranslationsType;
 use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
 use Barthy\SlugFilenameBundle\DependencyInjection\SlugFilenameSubscriberFactory;
+use Barthy\SlugFilenameBundle\Entity\SlugFileNameInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\Form\AbstractType;
@@ -89,18 +90,18 @@ class ImageUploadType extends AbstractType
                             'imageFile',
                             VichImageType::class,
                             [
-                                'download_uri'       => false,
-                                'image_uri'          => true,
-                                'allow_delete'       => false,
-                                'error_bubbling'     => false,
+                                'download_uri' => false,
+                                'image_uri' => true,
+                                'allow_delete' => false,
+                                'error_bubbling' => false,
                                 'translation_domain' => 'barthy_admin',
-                                'label'              => false,
-                                'required'           => false,
-                                'attr'               => [
+                                'label' => false,
+                                'required' => false,
+                                'attr' => [
                                     'placeholder' => 'choose_file',
-                                    'file_name'   => $nullImage === false ? $entity->getFileName() : "",
-                                    'crop_data'   => $nullImage === false ? $entity->getJSONCropData() : "",
-                                    'accept'      => $options['accept'],
+                                    'file_name' => $nullImage === false ? $entity->getFileName() : "",
+                                    'crop_data' => $nullImage === false ? $entity->getJSONCropData() : "",
+                                    'accept' => $options['accept'],
                                 ],
                             ]
                         )
@@ -139,49 +140,55 @@ class ImageUploadType extends AbstractType
                                     'class' => 'crop-h',
                                 ],
                             ]
-                        )
-                        ->add(
-                            'translations',
-                            TranslationsType::class,
-                            [
-                                'label'          => false,
-                                'required'       => false,
-                                'error_bubbling' => false,
-                                'attr'           => [
-                                    'class' => 'sort-hidden',
-                                ],
-                                'fields'         => [
-                                    'title' => [
-                                        'field_type'         => TextType::class,
-                                        'label'              => 'image.title',
-                                        'translation_domain' => 'barthy_admin',
-                                        'error_bubbling'     => true,
-                                    ],
-                                    'alt'   => [
-                                        'field_type'         => TextType::class,
-                                        'label'              => 'image.alt',
-                                        'translation_domain' => 'barthy_admin',
-                                        'error_bubbling'     => true,
-                                    ],
-                                ],
-                            ]
                         );
+
+                    if ($options['translations']) {
+                        $event->getForm()
+                            ->add(
+                                'translations',
+                                TranslationsType::class,
+                                [
+                                    'label' => false,
+                                    'required' => false,
+                                    'error_bubbling' => false,
+                                    'attr' => [
+                                        'class' => 'sort-hidden',
+                                    ],
+                                    'fields' => [
+                                        'title' => [
+                                            'field_type' => TextType::class,
+                                            'label' => 'image.title',
+                                            'translation_domain' => 'barthy_admin',
+                                            'error_bubbling' => true,
+                                        ],
+                                        'alt' => [
+                                            'field_type' => TextType::class,
+                                            'label' => 'image.alt',
+                                            'translation_domain' => 'barthy_admin',
+                                            'error_bubbling' => true,
+                                        ],
+                                    ],
+                                ]
+                            );
+
+                    }
                 }
             )
-            ->addEventSubscriber(
+            ->addEventListener(
+                FormEvents::PRE_SUBMIT,
+                [$this, 'preSubmit']
+            );
+
+        if ($options['slug_file_name']) {
+            $builder->addEventSubscriber(
                 $this->slugFilenameSubscriberFactory->create(
                     function ($entity, string $oldName, string $newname, string $uploadPath) {
                         $filePath = $uploadPath.'/'.$oldName;
                         $this->cacheManager->remove($filePath.'/'.$oldName);
                     }
                 )
-            )
-            ->addEventListener(
-                FormEvents::PRE_SUBMIT,
-                function (FormEvent $event) {
-                    $this->preSubmit($event);
-                }
             );
+        }
     }
 
     public function preSubmit(FormEvent $event)
@@ -217,25 +224,30 @@ class ImageUploadType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
+        $imageClass = $this->imageUploadConfig->getImageClass();
+        $metadata = $this->entityManager->getClassMetadata($imageClass);
+
         $resolver->setDefaults(
             [
-                'data_class'            => $this->imageUploadConfig->getImageClass(),
-                'accept'                => 'image/jpeg',
-                'cropper_aspect_width'  => null,
+                'data_class' => $imageClass,
+                'accept' => 'image/jpeg',
+                'cropper_aspect_width' => null,
                 'cropper_aspect_height' => null,
-                'attr'                  => function (Options $options) {
+                'attr' => function (Options $options) {
                     if (null === $options['cropper_aspect_width'] xor null === $options['cropper_aspect_height']) {
                         throw new OptionDefinitionException(
                             "cropper.js is enabled, but only one aspect ratio option has been defined. Use both the 'cropper_aspect_width' and 'cropper_aspect_height' options."
                         );
                     } else {
                         return [
-                            'class'              => 'vue-image',
-                            'data-aspect-width'  => $options['cropper_aspect_width'],
+                            'class' => 'vue-image',
+                            'data-aspect-width' => $options['cropper_aspect_width'],
                             'data-aspect-height' => $options['cropper_aspect_height'],
                         ];
                     }
                 },
+                'translations' => $metadata->hasAssociation('translations'),
+                'slug_file_name' => in_array(SlugFileNameInterface::class, class_implements($imageClass)),
             ]
         );
     }
