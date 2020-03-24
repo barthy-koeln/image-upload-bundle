@@ -93,3 +93,8 @@ a2lix_translation_form:
   default_locale: '%locale%'
   required_locales: ['%locale%']
 
+dama_doctrine_test:
+  enable_static_connection: true
+  enable_static_meta_data_cache: true
+  enable_static_query_cache: true
+

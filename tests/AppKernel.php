@@ -13,7 +13,7 @@ class AppKernel extends Kernel
 
     public function registerBundles()
     {
-        $bundles = array(
+        $bundles = [
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new Prezent\Doctrine\TranslatableBundle\PrezentDoctrineTranslatableBundle(),
             new Vich\UploaderBundle\VichUploaderBundle(),
@@ -29,7 +29,8 @@ class AppKernel extends Kernel
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Barthy\SlugFilenameBundle\BarthySlugFilenameBundle(),
             new Barthy\ImageUploadBundle\BarthyImageUploadBundle(),
-        );
+            new DAMA\DoctrineTestBundle\DAMADoctrineTestBundle(),
+        ];
 
         return $bundles;
     }
