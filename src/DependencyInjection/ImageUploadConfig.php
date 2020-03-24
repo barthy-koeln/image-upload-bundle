@@ -27,11 +27,17 @@ class ImageUploadConfig
      */
     private $imageClass;
 
+    /**
+     * @var string
+     */
+    private $imagePathPrefix;
+
     public function __construct(array $config)
     {
         $this->fileNameLanguage = $config['file_name_language'];
         $this->maxFileSize = $config['max_file_size'];
         $this->imageClass = $config['image_class'];
+        $this->imagePathPrefix = $config['image_path_prefix'];
     }
 
     /**
@@ -56,5 +62,13 @@ class ImageUploadConfig
     public function getImageClass(): string
     {
         return $this->imageClass;
+    }
+
+    /**
+     * @return string
+     */
+    public function getImagePathPrefix(): string
+    {
+        return $this->imagePathPrefix;
     }
 }

@@ -54,7 +54,6 @@ class ImageCollectionType extends AbstractType
                 },
                 'attr'                  => function (Options $options) use ($prepend, $append, $add, $sort) {
                     return [
-                        'class'                      => 'vue-collection',
                         'data-prototype-placeholder' => $options['prototype_placeholder'],
                         'data-allow-add'             => var_export($options['allow_add'], true),
                         'data-sortable'              => var_export($options['sortable'], true),

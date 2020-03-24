@@ -8,7 +8,6 @@
 
 namespace Barthy\ImageUploadBundle;
 
-
 use Barthy\ImageUploadBundle\DependencyInjection\BarthyImageUploadExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

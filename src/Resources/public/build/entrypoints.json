@@ -1,0 +1,18 @@
+{
+  "entrypoints": {
+    "js/main": {
+      "js": [
+        "bundles/barthyimageupload/build/runtime.js",
+        "bundles/barthyimageupload/build/js/main.js"
+      ]
+    },
+    "css/main": {
+      "js": [
+        "bundles/barthyimageupload/build/runtime.js"
+      ],
+      "css": [
+        "bundles/barthyimageupload/build/css/main.css"
+      ]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "image-upload-bundle",
+  "version": "1.0.0",
+  "main": "src/Resources/public/build/index.js",
+  "repository": "https://github.com/BarthyB/image-upload-bundle.git",
+  "author": "BarthyB <barthy.bonhomme@gmail.com>",
+  "license": "MIT",
+  "browserslist": [
+    "last 2 versions",
+    "> 1%"
+  ],
+  "dependencies": {
+    "core-js": "^3",
+    "filepond": "4.12.0",
+    "filepond-plugin-file-validate-size": "^2.2.1",
+    "filepond-plugin-file-validate-type": "^1.2.5",
+    "filepond-plugin-image-preview": "^4.6.1",
+    "regenerator-runtime": "^0.13.3"
+  },
+  "devDependencies": {
+    "@symfony/webpack-encore": "^0.28.3",
+    "autoprefixer": "^9.7.5",
+    "cssnano": "^4.1.10",
+    "node-sass": "^4.13.1",
+    "postcss-discard-comments": "^4.0.2",
+    "postcss-loader": "^3.0.0",
+    "postcss-scss": "^2.0.0",
+    "sass-loader": "^7.3.1",
+    "webpack-notifier": "^1.8.0"
+  },
+  "scripts": {
+    "dev": "encore dev",
+    "watch": "encore dev --watch",
+    "build": "encore production"
+  }
+}

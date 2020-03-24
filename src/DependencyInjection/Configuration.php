@@ -35,6 +35,9 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('image_class')
                     ->isRequired()
                 ->end()
+                ->scalarNode('image_path_prefix')
+                    ->isRequired()
+                ->end()
             ->end();
 
         return $treeBuilder;
