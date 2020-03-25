@@ -22,10 +22,16 @@ class ImageUploadConfig
      */
     private $maxFileSize;
 
+    /**
+     * @var string
+     */
+    private $imagePathPrefix;
+
     public function __construct(array $config)
     {
         $this->fileNameLanguage = $config['file_name_language'];
         $this->maxFileSize = $config['max_file_size'];
+        $this->imagePathPrefix = $config['image_path_prefix'];
     }
 
     /**
@@ -42,5 +48,13 @@ class ImageUploadConfig
     public function getMaxFileSize(): string
     {
         return $this->maxFileSize;
+    }
+
+    /**
+     * @return string
+     */
+    public function getImagePathPrefix(): string
+    {
+        return $this->imagePathPrefix;
     }
 }

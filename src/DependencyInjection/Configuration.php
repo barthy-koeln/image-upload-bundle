@@ -33,6 +33,9 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('max_file_size')
                     ->defaultValue('2M')
                 ->end()
+                ->scalarNode('image_path_prefix')
+                    ->isRequired()
+                ->end()
             ->end();
 
         return $treeBuilder;

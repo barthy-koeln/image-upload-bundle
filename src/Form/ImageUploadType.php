@@ -3,74 +3,30 @@
 namespace Barthy\ImageUploadBundle\Form;
 
 use A2lix\TranslationFormBundle\Form\Type\TranslationsType;
-use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
 use Barthy\ImageUploadBundle\Entity\Image;
 use Barthy\SlugFilenameBundle\DependencyInjection\SlugFilenameSubscriberFactory;
-use Doctrine\ORM\EntityManagerInterface;
-use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\OptionsResolver\Exception\OptionDefinitionException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Vich\UploaderBundle\Form\Type\VichImageType;
-use Vich\UploaderBundle\Mapping\PropertyMapping;
-use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
 class ImageUploadType extends AbstractType
 {
-
-    /**
-     * @var CacheManager
-     */
-    private $cacheManager;
-
-    /**
-     * @var KernelInterface
-     */
-    private $kernel;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var ImageUploadConfig
-     */
-    private $imageUploadConfig;
 
     /**
      * @var SlugFilenameSubscriberFactory
      */
     private $slugFilenameSubscriberFactory;
 
-    /**
-     * @var \Vich\UploaderBundle\Mapping\PropertyMappingFactory
-     */
-    private $mappingFactory;
-
-    public function __construct(
-        CacheManager $cacheManager,
-        KernelInterface $kernel,
-        EntityManagerInterface $entityManager,
-        ImageUploadConfig $imageUploadConfig,
-        SlugFilenameSubscriberFactory $slugFilenameSubscriberFactory,
-        PropertyMappingFactory $mappingFactory
-    ) {
-        $this->cacheManager = $cacheManager;
-        $this->kernel = $kernel;
-        $this->entityManager = $entityManager;
-        $this->imageUploadConfig = $imageUploadConfig;
+    public function __construct(SlugFilenameSubscriberFactory $slugFilenameSubscriberFactory) {
         $this->slugFilenameSubscriberFactory = $slugFilenameSubscriberFactory;
-        $this->mappingFactory = $mappingFactory;
     }
-
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -169,50 +125,7 @@ class ImageUploadType extends AbstractType
                         );
                 }
             )
-            ->addEventSubscriber(
-                $this->slugFilenameSubscriberFactory->create(
-                    function ($entity, string $oldName, string $newname, string $uploadPath) {
-                        $filePath = $uploadPath.'/'.$oldName;
-                        $this->cacheManager->remove($filePath.'/'.$oldName);
-                    }
-                )
-            )
-            ->addEventListener(
-                FormEvents::PRE_SUBMIT,
-                function (FormEvent $event) {
-                    $this->preSubmit($event);
-                }
-            );
-    }
-
-    public function preSubmit(FormEvent $event)
-    {
-        /**
-         * @var Image $image
-         */
-        $image = $event->getForm()->getData();
-
-        if ($image !== null) {
-
-            $data = $event->getData();
-
-            $cropDataChanged = $image->getX() !== intval($data['x'])
-                || $image->getY() !== intval($data['y'])
-                || $image->getW() !== intval($data['w'])
-                || $image->getH() !== intval($data['h']);
-
-            $fileChanged = $data['imageFile']['file'] !== null;
-
-            if ($cropDataChanged || $fileChanged) {
-                /**
-                 * @var PropertyMapping $mapping
-                 */
-                $mapping = $this->mappingFactory->fromObject($image);
-                $mapping = reset($mapping);
-
-                $this->cacheManager->remove($mapping->getUriPrefix().'/'.$image->getFileName());
-            }
-        }
+            ->addEventSubscriber($this->slugFilenameSubscriberFactory->create());
     }
 
 
