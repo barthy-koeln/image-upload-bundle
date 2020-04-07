@@ -89,12 +89,12 @@ class ImageUploadType extends AbstractType
                                 'label'              => false,
                                 'required'           => false,
                                 'attr'               => [
-                                    'placeholder'    => 'choose_file',
-                                    'data-file-name' => $nullImage === false ? $this->getPreviewImagePath(
+                                    'placeholder'        => 'choose_file',
+                                    'data-file-name'     => $nullImage === false ? $this->getPreviewImagePath(
                                         $entity->getFileName()
                                     ) : "",
-                                    'data-crop-data' => $nullImage === false ? $entity->getJSONCropData() : "",
-                                    'accept'         => $options['accept'],
+                                    'data-crop-data'     => $nullImage === false ? $entity->getJSONCropData() : "",
+                                    'accept'             => $options['accept'],
                                     'data-aspect-width'  => $options['cropper_aspect_width'],
                                     'data-aspect-height' => $options['cropper_aspect_height'],
                                 ],
@@ -163,6 +163,7 @@ class ImageUploadType extends AbstractType
                                             'error_bubbling'     => true,
                                         ],
                                     ],
+                                    'excluded_fields' => $options['excluded_translation_fields']
                                 ]
                             );
                     }
@@ -198,12 +199,13 @@ class ImageUploadType extends AbstractType
 
         $resolver->setDefaults(
             [
-                'data_class'            => $imageClass,
-                'accept'                => 'image/jpeg',
-                'cropper_aspect_width'  => null,
-                'cropper_aspect_height' => null,
-                'translations'          => $metadata->hasAssociation('translations'),
-                'crop'                  => function (Options $options) {
+                'data_class'                    => $imageClass,
+                'accept'                        => 'image/jpeg',
+                'cropper_aspect_width'          => null,
+                'cropper_aspect_height'         => null,
+                'excluded_translation_fields' => [],
+                'translations'                  => $metadata->hasAssociation('translations'),
+                'crop'                          => function (Options $options) {
                     if (null === $options['cropper_aspect_width'] xor null === $options['cropper_aspect_height']) {
                         throw new OptionDefinitionException(
                             "cropper.js is enabled, but only one aspect ratio option has been defined. Use both the 'cropper_aspect_width' and 'cropper_aspect_height' options."
