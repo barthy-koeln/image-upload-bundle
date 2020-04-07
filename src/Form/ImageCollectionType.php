@@ -47,6 +47,7 @@ class ImageCollectionType extends AbstractType
                 'label'                       => 'article.images.label',
                 'excluded_translation_fields' => [],
                 'entry_classes'               => '',
+                'collection_classes'          => '',
                 'prototype_placeholder'       => '_images_',
                 'entry_type'                  => function (Options $options) {
                     return $options['sortable'] ? SortableImageUploadType::class : ImageUploadType::class;
@@ -63,6 +64,9 @@ class ImageCollectionType extends AbstractType
                         'data-append-title'          => $append,
                         'data-add-title'             => $add,
                         'data-sort-title'            => $sort,
+                        'attr'                       => [
+                            'class' => $options['collection_classes'],
+                        ],
                     ];
                 },
                 'entry_options'               => function (Options $options) {
