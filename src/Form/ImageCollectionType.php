@@ -64,9 +64,7 @@ class ImageCollectionType extends AbstractType
                         'data-append-title'          => $append,
                         'data-add-title'             => $add,
                         'data-sort-title'            => $sort,
-                        'attr'                       => [
-                            'class' => $options['collection_classes'],
-                        ],
+                        'class' => $options['collection_classes'],
                     ];
                 },
                 'entry_options'               => function (Options $options) {

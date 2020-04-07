@@ -183,6 +183,10 @@ class ImageUploadType extends AbstractType
          */
         $image = $event->getForm()->getData();
 
+        if($image === null){
+            return;
+        }
+
         $unitOfWork = $this->entityManager->getUnitOfWork();
         $changeSet = $unitOfWork->getEntityChangeSet($image);
 
