@@ -46,6 +46,7 @@ class ImageCollectionType extends AbstractType
                 'translation_domain'          => 'admin',
                 'label'                       => 'article.images.label',
                 'excluded_translation_fields' => [],
+                'entry_classes'               => '',
                 'prototype_placeholder'       => '_images_',
                 'entry_type'                  => function (Options $options) {
                     return $options['sortable'] ? SortableImageUploadType::class : ImageUploadType::class;
@@ -71,6 +72,9 @@ class ImageCollectionType extends AbstractType
                         'cropper_aspect_width'        => $options['cropper_aspect_width'],
                         'cropper_aspect_height'       => $options['cropper_aspect_height'],
                         'excluded_translation_fields' => $options['excluded_translation_fields'],
+                        'attr'                        => [
+                            'class' => $options['entry_classes'],
+                        ],
                     ];
                 },
             ]
