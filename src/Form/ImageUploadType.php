@@ -5,7 +5,6 @@ namespace Barthy\ImageUploadBundle\Form;
 use A2lix\TranslationFormBundle\Form\Type\TranslationsType;
 use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
 use Doctrine\ORM\EntityManagerInterface;
-use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -22,10 +21,6 @@ use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 class ImageUploadType extends AbstractType
 {
 
-    /**
-     * @var CacheManager
-     */
-    private $cacheManager;
 
     /**
      * @var KernelInterface
@@ -48,22 +43,15 @@ class ImageUploadType extends AbstractType
     private $mappingFactory;
 
     public function __construct(
-        CacheManager $cacheManager,
         KernelInterface $kernel,
         EntityManagerInterface $entityManager,
         ImageUploadConfig $imageUploadConfig,
         PropertyMappingFactory $mappingFactory
     ) {
-        $this->cacheManager = $cacheManager;
         $this->kernel = $kernel;
         $this->entityManager = $entityManager;
         $this->imageUploadConfig = $imageUploadConfig;
         $this->mappingFactory = $mappingFactory;
-    }
-
-    private function getPreviewImagePath(string $filename)
-    {
-        return $this->imageUploadConfig->getImagePathPrefix().DIRECTORY_SEPARATOR.$filename;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -104,6 +92,7 @@ class ImageUploadType extends AbstractType
                             'x',
                             HiddenType::class,
                             [
+                                'by_reference' => false,
                                 'attr' => [
                                     'class' => 'crop-x',
                                 ],
@@ -113,6 +102,7 @@ class ImageUploadType extends AbstractType
                             'y',
                             HiddenType::class,
                             [
+                                'by_reference' => false,
                                 'attr' => [
                                     'class' => 'crop-y',
                                 ],
@@ -122,6 +112,7 @@ class ImageUploadType extends AbstractType
                             'w',
                             HiddenType::class,
                             [
+                                'by_reference' => false,
                                 'attr' => [
                                     'class' => 'crop-w',
                                 ],
@@ -131,6 +122,7 @@ class ImageUploadType extends AbstractType
                             'h',
                             HiddenType::class,
                             [
+                                'by_reference' => false,
                                 'attr' => [
                                     'class' => 'crop-h',
                                 ],
@@ -143,13 +135,13 @@ class ImageUploadType extends AbstractType
                                 'translations',
                                 TranslationsType::class,
                                 [
-                                    'label'          => false,
-                                    'required'       => false,
-                                    'error_bubbling' => false,
-                                    'attr'           => [
+                                    'label'           => false,
+                                    'required'        => false,
+                                    'error_bubbling'  => false,
+                                    'attr'            => [
                                         'class' => 'sort-hidden',
                                     ],
-                                    'fields'         => [
+                                    'fields'          => [
                                         'title' => [
                                             'field_type'         => TextType::class,
                                             'label'              => 'image.title',
@@ -163,38 +155,13 @@ class ImageUploadType extends AbstractType
                                             'error_bubbling'     => true,
                                         ],
                                     ],
-                                    'excluded_fields' => $options['excluded_translation_fields']
+                                    'excluded_fields' => $options['excluded_translation_fields'],
                                 ]
                             );
                     }
                 }
-            )
-            ->addEventListener(
-                FormEvents::PRE_SUBMIT,
-                [$this, 'preSubmit']
             );
     }
-
-    public function preSubmit(FormEvent $event)
-    {
-
-        /**
-         * @var \Barthy\ImageUploadBundle\Entity\ImageInterface $image
-         */
-        $image = $event->getForm()->getData();
-
-        if($image === null){
-            return;
-        }
-
-        $unitOfWork = $this->entityManager->getUnitOfWork();
-        $changeSet = $unitOfWork->getEntityChangeSet($image);
-
-        if (!empty($changeSet)) {
-            $this->cacheManager->remove($this->getPreviewImagePath($image->getFileName()));
-        }
-    }
-
 
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -203,13 +170,13 @@ class ImageUploadType extends AbstractType
 
         $resolver->setDefaults(
             [
-                'data_class'                    => $imageClass,
-                'accept'                        => 'image/jpeg',
-                'cropper_aspect_width'          => null,
-                'cropper_aspect_height'         => null,
+                'data_class'                  => $imageClass,
+                'accept'                      => 'image/jpeg',
+                'cropper_aspect_width'        => null,
+                'cropper_aspect_height'       => null,
                 'excluded_translation_fields' => [],
-                'translations'                  => $metadata->hasAssociation('translations'),
-                'crop'                          => function (Options $options) {
+                'translations'                => $metadata->hasAssociation('translations'),
+                'crop'                        => function (Options $options) {
                     if (null === $options['cropper_aspect_width'] xor null === $options['cropper_aspect_height']) {
                         throw new OptionDefinitionException(
                             "cropper.js is enabled, but only one aspect ratio option has been defined. Use both the 'cropper_aspect_width' and 'cropper_aspect_height' options."
@@ -225,6 +192,11 @@ class ImageUploadType extends AbstractType
     public function getBlockPrefix()
     {
         return 'barthy_image_upload';
+    }
+
+    private function getPreviewImagePath(string $filename)
+    {
+        return $this->imageUploadConfig->getImagePathPrefix().DIRECTORY_SEPARATOR.$filename;
     }
 
 }

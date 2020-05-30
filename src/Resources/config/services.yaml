@@ -12,3 +12,7 @@ services:
   Barthy\ImageUploadBundle\:
     resource: '../../../src/*'
     exclude: '../../../src/{Entity,Migrations,Tests,Kernel.php}'
+
+  Barthy\ImageUploadBundle\ImageListener:
+    tags:
+      - {name: doctrine.event_listener, event: onFlush}
