@@ -23,7 +23,6 @@
     "ext-json": "*",
     "a2lix/translation-form-bundle": "^3.0",
     "barthy/cached-prezent-translation": "^1.0",
-    "barthy/slug-filename-bundle": "^0.1",
     "cocur/slugify": "^3.2",
     "liip/imagine-bundle": "^2.1",
     "prezent/doctrine-translatable-bundle": "^1.0",
@@ -31,7 +30,7 @@
     "symfony/form": "^4.1",
     "symfony/orm-pack": "^1.0",
     "symfony/validator": "^4.1",
-    "twig/extensions": "^1.5",
+    "twig/twig": "^2.11 || ^3.0",
     "vich/uploader-bundle": "^1.8"
   },
   "config": {
@@ -41,10 +40,6 @@
     "sort-packages": true
   },
   "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/barthy-koeln/slug-filename-bundle.git"
-    },
     {
       "type": "vcs",
       "url": "https://github.com/barthy-koeln/cached-prezent-translation.git"
