@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/php:7.4.2-cli-stretch
+      - image: circleci/php:7.4.2-cli
     environment:
       BADGE_TOKEN: c8da67c0-962c-46da-841a-d77b0ad34991
     working_directory: ~/image-upload-bundle
