@@ -3,11 +3,10 @@
  * Created by PhpStorm.
  * User: Barthy
  * Date: 15.10.18
- * Time: 22:26
+ * Time: 22:26.
  */
 
-namespace Barthy\ImageUploadBundle\Form;
-
+namespace BarthyKoeln\ImageUploadBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -17,11 +16,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ImageCollectionType extends AbstractType
 {
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(TranslatorInterface $translator)
     {
@@ -31,9 +26,9 @@ class ImageCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $prepend = $this->translator->trans('image.collection.prepend', [], 'barthy_image_upload');
-        $append = $this->translator->trans('image.collection.append', [], 'barthy_image_upload');
-        $add = $this->translator->trans('image.collection.add', [], 'barthy_image_upload');
-        $sort = $this->translator->trans('image.collection.sort', [], 'barthy_image_upload');
+        $append  = $this->translator->trans('image.collection.append', [], 'barthy_image_upload');
+        $add     = $this->translator->trans('image.collection.add', [], 'barthy_image_upload');
+        $sort    = $this->translator->trans('image.collection.sort', [], 'barthy_image_upload');
 
         $resolver->setDefaults(
             [
@@ -64,7 +59,7 @@ class ImageCollectionType extends AbstractType
                         'data-append-title'          => $append,
                         'data-add-title'             => $add,
                         'data-sort-title'            => $sort,
-                        'class' => $options['collection_classes'],
+                        'class'                      => $options['collection_classes'],
                     ];
                 },
                 'entry_options'               => function (Options $options) {

@@ -9,7 +9,8 @@
 /.idea/
 .DS_Store
 /coverage/
-/test/public
+/tests/public
+/tests/tests.db
 
 test-coverage.json
 
@@ -24,3 +25,8 @@ test-coverage.json
 
 node_modules
 composer.lock
+###> friendsofphp/php-cs-fixer ###
+/.php_cs.dist
+/.php_cs.cache
+/.phpcs-cache
+###< friendsofphp/php-cs-fixer ###

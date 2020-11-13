@@ -1,13 +1,12 @@
 <?php
 
-namespace Barthy\ImageUploadBundle\Form;
+namespace BarthyKoeln\ImageUploadBundle\Form;
 
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class SortableImageUploadType extends ImageUploadType
 {
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder

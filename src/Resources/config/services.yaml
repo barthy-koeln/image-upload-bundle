@@ -7,12 +7,36 @@ services:
     # fetching services directly from the container via $container->get() won't work.
     # The best practice is to be explicit about your dependencies anyway.
 
-  # makes classes in src/ available to be used as services
-  # this creates a service per class whose id is the fully-qualified class name
-  Barthy\ImageUploadBundle\:
-    resource: '../../../src/*'
-    exclude: '../../../src/{Entity,Migrations,Tests,Kernel.php}'
+  BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig:
+    public: true
 
-  Barthy\ImageUploadBundle\ImageListener:
+  BarthyKoeln\ImageUploadBundle\Twig\ImageFilterExtension:
+    public: true
+
+  BarthyKoeln\ImageUploadBundle\EventListener\ImageListener:
     tags:
-      - {name: doctrine.event_listener, event: onFlush}
+      - { name: doctrine.event_listener, event: onFlush }
+
+  BarthyKoeln\ImageUploadBundle\Validator\FileSizeConstraintValidator: ~
+
+  BarthyKoeln\ImageUploadBundle\Validator\FileTitleConstraintValidator: ~
+
+  BarthyKoeln\ImageUploadBundle\Form\ImageUploadType:
+    public: true
+    tags:
+      - { name: form.type }
+
+  BarthyKoeln\ImageUploadBundle\Form\SortableImageUploadType:
+    public: true
+    tags:
+      - { name: form.type }
+
+  BarthyKoeln\ImageUploadBundle\Form\ImageCollectionType:
+    public: true
+    tags:
+      - { name: form.type }
+
+  BarthyKoeln\ImageUploadBundle\Form\SortableImageCollectionType:
+    public: true
+    tags:
+      - { name: form.type }

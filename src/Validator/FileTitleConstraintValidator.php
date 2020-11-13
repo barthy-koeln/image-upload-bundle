@@ -1,27 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Barthy
- * Date: 30.01.19
- * Time: 17:47
- */
 
-namespace Barthy\ImageUploadBundle\Validator;
+namespace BarthyKoeln\ImageUploadBundle\Validator;
 
-
-use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
-use Barthy\ImageUploadBundle\Entity\Image;
-use Barthy\ImageUploadBundle\Entity\ImageTranslationTrait;
+use BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
+use BarthyKoeln\ImageUploadBundle\Entity\ImageTranslationTrait;
+use Locale;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 class FileTitleConstraintValidator extends ConstraintValidator
 {
-
-    /**
-     * @var ImageUploadConfig
-     */
-    private $config;
+    private ImageUploadConfig $config;
 
     public function __construct(ImageUploadConfig $config)
     {
@@ -31,21 +20,29 @@ class FileTitleConstraintValidator extends ConstraintValidator
     /**
      * Checks if the passed value is valid.
      *
-     * @param Image      $value      The value that should be validated
-     * @param Constraint $constraint The constraint for the validation
+     * @param \BarthyKoeln\ImageUploadBundle\Entity\ImageInterface $value      The value that should be validated
+     * @param Constraint                                           $constraint The constraint for the validation
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!(method_exists($value, 'getTranslations'))) {
+            return;
+        }
 
         $locale = $this->config->getFileNameLanguage();
 
         /**
+         * @var \Doctrine\Common\Collections\Collection $translations
+         */
+        $translations = $value->getTranslations();
+
+        /**
          * @var ImageTranslationTrait $trans
          */
-        $trans = $value->getTranslations()->get($locale);
+        $trans = $translations->get($locale);
 
         if (null === $trans) {
-            $localeDisplayName = \Locale::getDisplayLanguage($locale);
+            $localeDisplayName = Locale::getDisplayLanguage($locale);
 
             $this->context
                 ->buildViolation('image.translation.not_empty')

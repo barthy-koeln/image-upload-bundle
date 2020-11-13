@@ -1,28 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Barthy
- * Date: 30.01.19
- * Time: 18:00
- */
 
-namespace Barthy\ImageUploadBundle\Validator;
-
+namespace BarthyKoeln\ImageUploadBundle\Validator;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @Annotation
  * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
- *
- * Class FileSizeConstraint
- * @package Barthy\ImageUploadBundle\Validator
  */
 class FileSizeConstraint extends Assert\File
 {
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function validatedBy()
     {
@@ -30,7 +19,7 @@ class FileSizeConstraint extends Assert\File
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTargets()
     {

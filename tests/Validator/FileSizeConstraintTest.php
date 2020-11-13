@@ -1,63 +1,54 @@
 <?php
 
-namespace Barthy\ImageUploadBundle\Test\Validator;
+namespace Tests\Validator;
 
-use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
-use Barthy\ImageUploadBundle\Validator\FileSizeConstraint;
-use Barthy\ImageUploadBundle\Validator\FileSizeConstraintValidator;
+use BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
+use BarthyKoeln\ImageUploadBundle\Validator\FileSizeConstraint;
+use BarthyKoeln\ImageUploadBundle\Validator\FileSizeConstraintValidator;
 use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\File\File;
-
-class FileSizeEntity
-{
-
-    /**
-     * @FileSizeConstraint()
-     * @var File
-     */
-    public $imageFile;
-}
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Tests\Entity\FileSizeEntity;
 
 class FileSizeConstraintTest extends KernelTestCase
 {
+    private FileSizeConstraint $constraint;
+    private ?ValidatorInterface $validator;
 
-    /**
-     * @var FileSizeConstraint
-     */
-    private $constraint;
-
-    public function setUp()
+    public function setUp(): void
     {
         self::bootKernel();
 
         $this->constraint = new FileSizeConstraint();
+        $this->validator  = self::$container->get('validator');
 
         parent::setUp();
     }
 
     /**
-     * @covers \Barthy\ImageUploadBundle\Validator\FileSizeConstraint::validatedBy
-     * @covers \Barthy\ImageUploadBundle\Validator\FileSizeConstraint::getTargets
-     * @covers \Barthy\ImageUploadBundle\Validator\FileSizeConstraintValidator::validate
      * @throws \Exception
      */
     public function testValidation()
     {
-        $validator = self::$container->get('validator');
-        $entity = new FileSizeEntity();
+        $entity    = new FileSizeEntity();
 
         $entity->imageFile = new File(__DIR__.'/../Fixtures/Files/big_image.jpg', true);
-        $violations = $validator->validate($entity);
+        $violations        = $this->validator->validate($entity->imageFile, $this->constraint);
         $this->assertEquals(1, $violations->count());
 
         $entity->imageFile = new File(__DIR__.'/../Fixtures/Files/small_image.jpg', true);
-        $violations = $validator->validate($entity);
+        $violations        = $this->validator->validate($entity->imageFile, $this->constraint);
         $this->assertEquals(0, $violations->count());
+
+        /**
+         * @var \Symfony\Component\Validator\ConstraintViolation $violation
+         */
+        foreach ($violations as $violation) {
+        }
     }
 
     /**
-     * @covers \Barthy\ImageUploadBundle\Validator\FileSizeConstraintValidator::__construct
      * @throws \ReflectionException
      */
     public function testInjection()
@@ -65,11 +56,11 @@ class FileSizeConstraintTest extends KernelTestCase
         /**
          * @var ImageUploadConfig $config
          */
-        $config = self::$container->get(ImageUploadConfig::class);
+        $config    = self::$container->get(ImageUploadConfig::class);
         $validator = new FileSizeConstraintValidator($config);
 
         $reflection = new ReflectionClass($validator);
-        $property = $reflection->getProperty('config');
+        $property   = $reflection->getProperty('config');
         $property->setAccessible(true);
 
         self::assertEquals($config, $property->getValue($validator));

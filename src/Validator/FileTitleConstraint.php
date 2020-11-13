@@ -1,30 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Barthy
- * Date: 30.01.19
- * Time: 17:45
- */
 
-namespace Barthy\ImageUploadBundle\Validator;
-
+namespace BarthyKoeln\ImageUploadBundle\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
 /**
  * @Annotation
  * @Target({"CLASS", "ANNOTATION"})
- *
- * Class FileTitleConstraint
- * @package Barthy\ImageUploadBundle\Validator
  */
 class FileTitleConstraint extends Constraint
 {
-
-    public $message = 'file_title_constraint.message';
+    public string $message = 'file_title_constraint.message';
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function validatedBy()
     {
@@ -32,7 +21,7 @@ class FileTitleConstraint extends Constraint
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTargets()
     {

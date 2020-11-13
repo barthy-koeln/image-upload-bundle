@@ -1,38 +1,29 @@
 <?php
 
+namespace BarthyKoeln\ImageUploadBundle\EventListener;
 
-namespace Barthy\ImageUploadBundle;
-
-
-use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
-use Barthy\ImageUploadBundle\Entity\ImageInterface;
+use BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
+use BarthyKoeln\ImageUploadBundle\Entity\ImageInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 
 class ImageListener
 {
+    private CacheManager $cacheManager;
 
-    /**
-     * @var CacheManager
-     */
-    private $cacheManager;
-
-    /**
-     * @var ImageUploadConfig
-     */
-    private $imageUploadConfig;
+    private ImageUploadConfig $imageUploadConfig;
 
     public function __construct(
         CacheManager $cacheManager,
         ImageUploadConfig $imageUploadConfig
     ) {
-        $this->cacheManager = $cacheManager;
+        $this->cacheManager      = $cacheManager;
         $this->imageUploadConfig = $imageUploadConfig;
     }
 
     public function onFlush(OnFlushEventArgs $eventArgs): void
     {
-        $unitOfWork = $eventArgs->getEntityManager()->getUnitOfWork();
+        $unitOfWork      = $eventArgs->getEntityManager()->getUnitOfWork();
         $updatedEntities = $unitOfWork->getScheduledEntityUpdates();
 
         foreach ($updatedEntities as $entity) {

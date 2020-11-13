@@ -1,31 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Barthy
- * Date: 31.01.19
- * Time: 22:40
- */
 
-namespace Barthy\ImageUploadBundle\Test\Entity;
+namespace Tests\Entity;
 
-use Barthy\ImageUploadBundle\Entity\ImageTranslationTrait;
-use Barthy\ImageUploadBundle\Tests\Entity\SpecificImage;
-use Barthy\ImageUploadBundle\Tests\Entity\SpecificImageTranslation;
+use BarthyKoeln\ImageUploadBundle\Entity\ImageTranslationTrait;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\File\File;
 
-
 class ImageTest extends KernelTestCase
 {
+    protected SpecificImage $image;
 
-    /**
-     * @var SpecificImage
-     */
-    protected $image;
-
-    public function setUp()
+    public function setUp(): void
     {
         self::bootKernel();
 
@@ -34,39 +21,11 @@ class ImageTest extends KernelTestCase
         parent::setUp();
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::__construct
-     */
-    public function test__construct()
+    public function testConstruct()
     {
         self::assertInstanceOf(ArrayCollection::class, $this->image->getTranslations());
     }
 
-
-    /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getSlug
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getSlugFieldName
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getSlugFieldValue
-     */
-    public function testGetSlug()
-    {
-        $translation = new SpecificImageTranslation();
-
-        $translation->setLocale('de');
-        $translation->setTitle('äöüßéèê');
-        $translation->setAlt('test');
-        $this->image->addTranslation($translation);
-
-        $slug = $this->image->getSlug('de');
-
-        self::assertEquals('title', $this->image->getSlugFieldName());
-        self::assertEquals('äöüßéèê', $this->image->getSlugFieldValue('de'));
-        self::assertEquals('aeoeuesseee', $slug);
-    }
-
-    /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getJSONCropData
-     */
     public function testGetJSONCropData()
     {
         self::assertEmpty($this->image->getJSONCropData());
@@ -80,21 +39,18 @@ class ImageTest extends KernelTestCase
         self::assertEquals(
             json_encode(
                 [
-                    "x"        => 5,
-                    "y"        => 10,
-                    "width"    => 500,
-                    "height"   => 1000,
-                    "original" => [1920, 1080],
+                    'x'        => 5,
+                    'y'        => 10,
+                    'width'    => 500,
+                    'height'   => 1000,
+                    'original' => [1920, 1080],
                 ]
             ),
             $this->image->getJSONCropData()
         );
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::__toString
-     */
-    public function test__toString()
+    public function testToString()
     {
         $this->image->setFileName(null);
         self::assertEmpty($this->image->__toString());
@@ -103,28 +59,12 @@ class ImageTest extends KernelTestCase
         self::assertEquals('test.jpg', $this->image->__toString());
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::setPosition
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getPosition
-     */
     public function testPositionFunctions()
     {
         $this->image->setPosition(0);
         self::assertEquals(0, $this->image->getPosition());
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::setX
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getX
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getY
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::setY
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getW
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::setW
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getH
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::setH
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getDimensions
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::setDimensions
-     */
     public function testCropAndDimensionFunctions()
     {
         $this->image->setX(100);
@@ -140,49 +80,29 @@ class ImageTest extends KernelTestCase
         self::assertEquals([1920, 1080], $this->image->getDimensions());
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::setFileName
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getFileName
-     */
     public function testFilenameFunctions()
     {
         $this->image->setFileName('file.jpg');
         self::assertEquals('file.jpg', $this->image->getFileName());
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::setMimeType
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getMimeType
-     */
     public function testMimeTypeFunctions()
     {
         $this->image->setMimeType('image/jpeg');
         self::assertEquals('image/jpeg', $this->image->getMimeType());
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::setSize
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getSize
-     */
     public function testSizeFunctions()
     {
         $this->image->setSize(200);
         self::assertEquals(200, $this->image->getSize());
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getId
-     */
     public function testIdFunctions()
     {
         self::assertNull($this->image->getId());
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::setUpdatedAt
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getUpdatedAt
-     * @throws \Exception
-     */
     public function testUpdatedAtFunctions()
     {
         $dateTime = new DateTime();
@@ -191,8 +111,6 @@ class ImageTest extends KernelTestCase
     }
 
     /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::setImageFile
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getImageFile
      * @throws \Exception
      */
     public function testImageFileFunctions()
@@ -211,16 +129,6 @@ class ImageTest extends KernelTestCase
         self::assertEquals($date, $this->image->getUpdatedAt());
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::addTranslation
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getAlt
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::getTitle
-     * @covers \Barthy\ImageUploadBundle\Entity\ImageTranslationTrait::setLocale
-     * @covers \Barthy\ImageUploadBundle\Entity\ImageTranslationTrait::setTitle
-     * @covers \Barthy\ImageUploadBundle\Entity\ImageTranslationTrait::getTitle
-     * @covers \Barthy\ImageUploadBundle\Entity\ImageTranslationTrait::setAlt
-     * @covers \Barthy\ImageUploadBundle\Entity\ImageTranslationTrait::getAlt
-     */
     public function testTranslations()
     {
         $translation = new SpecificImageTranslation();
@@ -245,8 +153,6 @@ class ImageTest extends KernelTestCase
     }
 
     /**
-     * @covers \Barthy\ImageUploadBundle\Entity\Image::validate
-     * @covers \Barthy\ImageUploadBundle\Entity\ImageTranslationTrait::validate
      * @throws \Exception
      */
     public function testValidation()

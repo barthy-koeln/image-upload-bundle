@@ -53,7 +53,7 @@ This bundle provides …
 
 return [
     // […]
-    Barthy\ImageUploadBundle\BarthyImageUploadBundle::class => ['all' => true],
+    BarthyKoeln\ImageUploadBundle\BarthyKoelnImageUploadBundle::class => ['all' => true],
 ];
 ```
 
@@ -76,7 +76,7 @@ barthy_image_upload:
 ```php
 <?php
 
-use Barthy\ImageUploadBundle\Entity\Image;
+use BarthyKoeln\ImageUploadBundle\Entity\Image;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -88,7 +88,7 @@ class Project
      *
      * @Assert\Valid
      *
-     * @ORM\OneToOne(targetEntity="Barthy\ImageUploadBundle\FileSizeEntity\Image", cascade={"all"})
+     * @ORM\OneToOne(targetEntity="BarthyKoeln\ImageUploadBundle\FileSizeEntity\Image", cascade={"all"})
      * @ORM\JoinColumn(name="image_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $image;
@@ -117,7 +117,7 @@ class Project
 ```php
 <?php
 
-use Barthy\ImageUploadBundle\Entity\Image;
+use BarthyKoeln\ImageUploadBundle\Entity\Image;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -132,7 +132,7 @@ class Project
      *
      * @Assert\Valid
      *
-     * @ORM\ManyToMany(targetEntity="Barthy\ImageUploadBundle\FileSizeEntity\Image", cascade={"all"})
+     * @ORM\ManyToMany(targetEntity="BarthyKoeln\ImageUploadBundle\FileSizeEntity\Image", cascade={"all"})
      * @ORM\JoinTable(name="slider_modules_images",
      *     joinColumns={@ORM\JoinColumn(name="slider_module_id", referencedColumnName="id", onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="image_id", referencedColumnName="id", onDelete="CASCADE", unique=true)}
@@ -202,7 +202,7 @@ class Project
 ```php
 <?php
 
-use Barthy\ImageUploadBundle\Form\ImageUploadType;
+use BarthyKoeln\ImageUploadBundle\Form\ImageUploadType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -234,7 +234,7 @@ class ProjectAdminType extends AbstractType
 ```php
 <?php
 
-use Barthy\ImageUploadBundle\Form\ImageCollectionType;
+use BarthyKoeln\ImageUploadBundle\Form\ImageCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 

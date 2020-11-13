@@ -1,19 +1,20 @@
 <?php
 
+namespace BarthyKoeln\ImageUploadBundle\Entity;
 
-namespace Barthy\ImageUploadBundle\Entity;
-
-use Barthy\CachedPrezentTranslation\CachedPrezentTranslationTrait;
+use BarthyKoeln\CachedPrezentTranslation\CachedPrezentTranslationTrait;
 use Prezent\Doctrine\Translatable\Annotation as Prezent;
+use Symfony\Component\Validator\Constraints as Assert;
 
 trait TranslatedImageTrait
 {
-
     use CachedPrezentTranslationTrait;
 
     /**
-     * @Prezent\Translations(targetEntity="ImageTranslationTrait")
      * @Assert\Valid
+     * @Prezent\Translations(targetEntity="BarthyKoeln\ImageUploadBundle\Entity\ImageTranslationTrait")
+     *
+     * @var \Doctrine\Common\Collections\Collection
      */
     protected $translations;
 

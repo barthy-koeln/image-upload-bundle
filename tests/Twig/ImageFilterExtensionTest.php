@@ -1,37 +1,27 @@
 <?php
 
-namespace Barthy\ImageUploadBundle\Test\Twig;
+namespace Tests\Twig;
 
-use Barthy\ImageUploadBundle\Tests\Entity\SpecificImage;
-use Barthy\ImageUploadBundle\Twig\ImageFilterExtension;
+use BarthyKoeln\ImageUploadBundle\Twig\ImageFilterExtension;
 use PHPUnit\Framework\TestCase;
+use Tests\Entity\SpecificImage;
 
 class ImageFilterExtensionTest extends TestCase
 {
+    private ImageFilterExtension $extension;
 
-    /**
-     * @var ImageFilterExtension
-     */
-    private $extension;
-
-    public function setUp()
+    public function setUp(): void
     {
         $this->extension = new ImageFilterExtension();
 
         parent::setUp();
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Twig\ImageFilterExtension::getFilters
-     */
     public function testFilterDeclaration()
     {
         self::assertGreaterThan(0, count($this->extension->getFilters()));
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Twig\ImageFilterExtension::thumbnailParams
-     */
     public function testThumbnailParamsFilter()
     {
         $image = new SpecificImage();
@@ -41,8 +31,8 @@ class ImageFilterExtensionTest extends TestCase
         $image->setH(600);
 
         $params = [
-            'crop' => [
-                'size' => [
+            'crop'      => [
+                'size'  => [
                     500,
                     600,
                 ],
@@ -65,5 +55,4 @@ class ImageFilterExtensionTest extends TestCase
         $params['thumbnail']['mode'] = 'inset';
         $this->assertEquals($params, $this->extension->thumbnailParams($image, 200, 300, 'inset'));
     }
-
 }

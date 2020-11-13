@@ -1,21 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Barthy
- * Date: 15.08.18
- * Time: 08:51
- */
 
-namespace Barthy\ImageUploadBundle\Twig;
+namespace BarthyKoeln\ImageUploadBundle\Twig;
 
-
-use Barthy\ImageUploadBundle\Entity\ImageInterface;
+use BarthyKoeln\ImageUploadBundle\Entity\ImageInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
 class ImageFilterExtension extends AbstractExtension
 {
-
     public function getFilters(): array
     {
         return [
@@ -31,10 +23,10 @@ class ImageFilterExtension extends AbstractExtension
     ): array {
         $params = [];
 
-        if ($image !== null) {
+        if (null !== $image) {
             $params = [
                 'crop' => [
-                    'size' => [
+                    'size'  => [
                         $image->getW(),
                         $image->getH(),
                     ],
@@ -58,5 +50,4 @@ class ImageFilterExtension extends AbstractExtension
 
         return $params;
     }
-
 }

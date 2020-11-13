@@ -22,10 +22,11 @@ framework:
   session:
     storage_id: session.storage.mock_file
 
-barthy_image_upload:
+barthy_koeln_image_upload:
   max_file_size: 2M
   file_name_language: '%locale%'
-  image_class: Barthy\ImageUploadBundle\Tests\Entity\SpecificImage
+  image_class: \Tests\Entity\SpecificImage
+  image_path_prefix: '%image_path_prefix%'
 
 vich_uploader:
   db_driver: orm
@@ -36,21 +37,13 @@ vich_uploader:
       inject_on_load:     true
       delete_on_update:   true
       delete_on_remove:   true
-      namer:
-        service: Barthy\SlugFilenameBundle\DependencyInjection\SlugFileNamer
-        options:
-          language: '%locale%'
+      namer: Vich\UploaderBundle\Naming\UniqidNamer
 
 doctrine:
   dbal:
     # configure these for your database server
-    driver: 'pdo_mysql'
-    server_version: '5.7'
+    driver: 'pdo_sqlite'
     charset: utf8mb4
-    default_table_options:
-      charset: utf8mb4
-      collate: utf8mb4_unicode_ci
-
     url: '%env(resolve:DATABASE_URL)%'
   orm:
     auto_generate_proxy_classes: '%kernel.debug%'
@@ -61,7 +54,7 @@ doctrine:
         is_bundle: false
         type: annotation
         dir: '%kernel.project_dir%/tests/Entity'
-        prefix: 'Barthy\ImageUploadBundle\Tests\Entity'
+        prefix: 'Tests\Entity'
 
 liip_imagine:
   resolvers:

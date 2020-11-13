@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Barthy
- * Date: 18.06.18
- * Time: 20:46
- */
 
-namespace Barthy\ImageUploadBundle\Entity;
+namespace BarthyKoeln\ImageUploadBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Locale;
@@ -14,29 +8,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * Class ImageTranslationTrait
- * @package Barthy\ImageUploadBundle\Entity
+ * Class ImageTranslationTrait.
  */
 trait ImageTranslationTrait
 {
-
-    abstract function getLocale();
-
     /**
-     * @var string
      * @ORM\Column(type="string", length=255)
      */
-    private $title;
-
+    private ?string $title = null;
     /**
-     * @var string
      * @ORM\Column(type="string", length=255)
      */
-    private $alt;
+    private ?string $alt = null;
 
     /**
      * @Assert\Callback
-     * @param ExecutionContextInterface $context
      */
     public function validate(ExecutionContextInterface $context)
     {
@@ -61,33 +47,23 @@ trait ImageTranslationTrait
         }
     }
 
-    /**
-     * @return string
-     */
+    abstract public function getLocale();
+
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     */
     public function setTitle(?string $title): void
     {
         $this->title = $title;
     }
 
-    /**
-     * @return string
-     */
     public function getAlt(): ?string
     {
         return $this->alt;
     }
 
-    /**
-     * @param string $alt
-     */
     public function setAlt(?string $alt): void
     {
         $this->alt = $alt;

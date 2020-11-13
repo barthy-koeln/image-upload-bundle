@@ -1,19 +1,15 @@
 <?php
 
-namespace Barthy\ImageUploadBundle\Test\DependencyInjection;
+namespace Tests\DependencyInjection;
 
-use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
+use BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ImageUploadConfigTest extends KernelTestCase
 {
+    protected ?ImageUploadConfig $config;
 
-    /**
-     * @var ImageUploadConfig
-     */
-    protected $config;
-
-    public function setUp()
+    public function setUp(): void
     {
         self::bootKernel();
 
@@ -23,7 +19,7 @@ class ImageUploadConfigTest extends KernelTestCase
     }
 
     /**
-     * @covers \Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig::__construct
+     * @covers \BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig::__construct
      */
     public function testConfigInjection()
     {
@@ -31,7 +27,7 @@ class ImageUploadConfigTest extends KernelTestCase
     }
 
     /**
-     * @covers \Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig::getFileNameLanguage
+     * @covers \BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig::getFileNameLanguage
      */
     public function testFileNameLanguageFunctions()
     {
@@ -39,7 +35,7 @@ class ImageUploadConfigTest extends KernelTestCase
     }
 
     /**
-     * @covers \Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig::getMaxFileSize
+     * @covers \BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig::getMaxFileSize
      */
     public function testMaxFileSizeFunctions()
     {

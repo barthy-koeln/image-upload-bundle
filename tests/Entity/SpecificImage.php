@@ -1,30 +1,25 @@
 <?php
 
+namespace Tests\Entity;
 
-namespace Barthy\ImageUploadBundle\Tests\Entity;
-
-use Barthy\ImageUploadBundle\Entity\ImageInterface;
-use Barthy\ImageUploadBundle\Entity\ImageTrait;
-use Barthy\ImageUploadBundle\Entity\TitleFileNameTrait;
-use Barthy\ImageUploadBundle\Entity\TranslatedImageTrait;
-use Barthy\ImageUploadBundle\Validator\FileTitleConstraint;
-use Barthy\SlugFilenameBundle\Entity\SlugFileNameInterface;
+use BarthyKoeln\ImageUploadBundle\Entity\ImageInterface;
+use BarthyKoeln\ImageUploadBundle\Entity\ImageTrait;
+use BarthyKoeln\ImageUploadBundle\Entity\TranslatedImageTrait;
+use BarthyKoeln\ImageUploadBundle\Validator\FileTitleConstraint;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Prezent\Doctrine\Translatable\Entity\AbstractTranslatable;
 use Prezent\Doctrine\Translatable\Annotation as Prezent;
+use Prezent\Doctrine\Translatable\Entity\AbstractTranslatable;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @FileTitleConstraint()
  * @ORM\Entity()
- * @package Barthy\ImageUploadBundle\Entity
  * @Vich\Uploadable
  */
-class SpecificImage extends AbstractTranslatable implements SlugFileNameInterface, ImageInterface
+class SpecificImage extends AbstractTranslatable implements ImageInterface
 {
-
     /**
      * @ORM\Id()
      * @ORM\Column(type="guid")
@@ -35,13 +30,12 @@ class SpecificImage extends AbstractTranslatable implements SlugFileNameInterfac
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
      *
-     * @Prezent\Translations(targetEntity="\Barthy\ImageUploadBundle\Tests\Entity\SpecificImageTranslation")
+     * @Prezent\Translations(targetEntity="Tests\Entity\SpecificImageTranslation")
      */
     protected $translations;
 
     use ImageTrait;
     use TranslatedImageTrait;
-    use TitleFileNameTrait;
 
     use TimestampableEntity;
 

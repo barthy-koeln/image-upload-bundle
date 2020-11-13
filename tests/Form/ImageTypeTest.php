@@ -1,67 +1,43 @@
 <?php
 
-namespace Barthy\ImageUploadBundle\Form;
+namespace Tests\Form;
 
-
-use Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
-use Barthy\ImageUploadBundle\Tests\Entity\SpecificImage;
-use Barthy\ImageUploadBundle\Tests\Entity\SpecificImageTranslation;
-use Barthy\SlugFilenameBundle\DependencyInjection\SlugFilenameSubscriberFactory;
+use BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
+use BarthyKoeln\ImageUploadBundle\Form\ImageCollectionType;
+use BarthyKoeln\ImageUploadBundle\Form\ImageUploadType;
+use BarthyKoeln\ImageUploadBundle\Form\SortableImageUploadType;
+use Codeception\AssertThrows;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\OptionsResolver\Exception\OptionDefinitionException;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Tests\Entity\SpecificImage;
+use Tests\Entity\SpecificImageTranslation;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
 class ImageTypeTest extends KernelTestCase
 {
+    use AssertThrows;
 
-    /**
-     * @var \Symfony\Component\Filesystem\Filesystem
-     */
-    private static $fileSystem;
+    private static ?Filesystem $fileSystem;
 
-    /**
-     * @var \Symfony\Component\Translation\Translator
-     */
-    private $translator;
+    private ?TranslatorInterface $translator;
 
-    /**
-     * @var \Liip\ImagineBundle\Imagine\Cache\CacheManager|object
-     */
-    private $cacheManager;
+    private ?EntityManagerInterface $entityManager;
 
-    /**
-     * @var \Doctrine\ORM\EntityManager|object
-     */
-    private $entityManager;
+    private ?ImageUploadConfig $imageUploadConfig;
 
-    /**
-     * @var \Barthy\ImageUploadBundle\DependencyInjection\ImageUploadConfig|object
-     */
-    private $imageUploadConfig;
+    private ?PropertyMappingFactory $propertyMappingFactory;
 
-    /**
-     * @var \Barthy\SlugFilenameBundle\DependencyInjection\SlugFilenameSubscriberFactory|object
-     */
-    private $slugFactory;
+    private ?FormFactoryInterface $formFactory;
 
-    /**
-     * @var object|\Vich\UploaderBundle\Mapping\PropertyMappingFactory
-     */
-    private $propertyMappingFactory;
-
-    /**
-     * @var object|\Symfony\Component\Form\FormFactory
-     */
-    private $formFactory;
-
-
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::bootKernel();
         self::$fileSystem = self::$container->get('filesystem');
@@ -71,46 +47,29 @@ class ImageTypeTest extends KernelTestCase
         parent::setUpBeforeClass();
     }
 
-    protected function setUp()
+    public static function tearDownAfterClass(): void
     {
-        self::bootKernel();
-
-        $this->translator = self::$container->get(TranslatorInterface::class);
-        $this->cacheManager = self::$container->get('liip_imagine.cache.manager');
-        $this->entityManager = self::$container->get(EntityManagerInterface::class);
-        $this->imageUploadConfig = self::$container->get(ImageUploadConfig::class);
-        $this->slugFactory = self::$container->get(SlugFilenameSubscriberFactory::class);
-        $this->propertyMappingFactory = self::$container->get(PropertyMappingFactory::class);
-        $this->formFactory = self::$container->get('form.factory');
-
-        parent::setUp();
+        self::$fileSystem = null;
+        parent::tearDownAfterClass();
     }
 
-    protected function getExtensions()
+    /**
+     * @throws \Exception
+     */
+    public function testSubmitValidData(): void
     {
-        $collectionType = new ImageCollectionType($this->translator);
+        $formData = self::getValidDataSet();
 
-        $imageType = new ImageUploadType(
-            $this->cacheManager,
-            self::$kernel,
-            $this->entityManager,
-            $this->imageUploadConfig,
-            $this->slugFactory,
-            $this->propertyMappingFactory
-        );
+        $objectToCompare = new ArrayCollection();
+        $object          = self::getArrayCollection($formData);
+        $this->submitForm($object, $objectToCompare, $formData);
+        self::assertFileExists(self::$kernel->getProjectDir().'/tests/public/uploads/images/'.$object->get(0)->getFileName());
 
-        $sortableImageType = new SortableImageUploadType(
-            $this->cacheManager,
-            self::$kernel,
-            $this->entityManager,
-            $this->imageUploadConfig,
-            $this->slugFactory,
-            $this->propertyMappingFactory
-        );
-
-        return [
-            new PreloadedExtension([$imageType, $sortableImageType, $collectionType], []),
-        ];
+        $object->get(0)->setImageFile(null);
+        $objectToCompare->get(0)->setImageFile(null);
+        $formData[0]['imageFile'] = null;
+        $this->submitForm($object, $objectToCompare, $formData);
+        self::assertFileExists(self::$kernel->getProjectDir().'/tests/public/uploads/images/'.$object->get(0)->getFileName());
     }
 
     private static function getValidDataSet()
@@ -118,15 +77,15 @@ class ImageTypeTest extends KernelTestCase
         $basePath = self::$kernel->getProjectDir().'/tests/Fixtures/Files/';
         $fileName = 'small_image.jpg';
 
-        $copyFileName = "cp-".$fileName;
-        $filePath = $basePath.$copyFileName;
+        $copyFileName = 'cp-'.$fileName;
+        $filePath     = $basePath.$copyFileName;
 
         @copy($basePath.$fileName, $filePath);
 
         $file = new UploadedFile(
             $filePath,
             $copyFileName,
-            "image/jpeg",
+            'image/jpeg',
             null,
             true
         );
@@ -139,9 +98,7 @@ class ImageTypeTest extends KernelTestCase
                         'alt'   => 'Testing',
                     ],
                 ],
-                'imageFile'    => [
-                    'file' => $file,
-                ],
+                'imageFile'    => $file,
                 'position'     => 0,
                 'x'            => 0,
                 'y'            => 0,
@@ -152,12 +109,9 @@ class ImageTypeTest extends KernelTestCase
     }
 
     /**
-     * @param array $formData
-     *
-     * @return \Doctrine\Common\Collections\ArrayCollection
      * @throws \Exception
      */
-    private static function getArrayCollection(array &$formData): ArrayCollection
+    private static function getArrayCollection(array $formData): ArrayCollection
     {
         $object = new ArrayCollection();
         foreach ($formData as $imageData) {
@@ -173,7 +127,7 @@ class ImageTypeTest extends KernelTestCase
             }
 
             $image->setPosition($imageData['position']);
-            $image->setImageFile($imageData['imageFile']['file']);
+            $image->setImageFile($imageData['imageFile']);
             $image->setX($imageData['x']);
             $image->setY($imageData['y']);
             $image->setW($imageData['w']);
@@ -185,7 +139,49 @@ class ImageTypeTest extends KernelTestCase
         return $object;
     }
 
-    private static function sanitizeUpdatedAtDates(ArrayCollection &$object, ArrayCollection &$objectToCompare)
+    private function submitForm(ArrayCollection $object, ArrayCollection $objectToCompare, array $formData): void
+    {
+        $form = $this->formFactory->create(
+            ImageCollectionType::class,
+            $objectToCompare,
+            [
+                'sortable' => true,
+            ]
+        );
+
+        $form->submit($formData);
+
+        if (false === $form->isValid()) {
+            $errors = $form->getErrors(true);
+
+            foreach ($errors as $error) {
+                echo PHP_EOL.$error->getOrigin()->getName().': '.$error->getMessage().PHP_EOL;
+            }
+        }
+
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+
+        self::sanitizeUpdatedAtDates($object, $objectToCompare);
+
+        $view     = $form->createView();
+        $children = $view->children;
+
+        foreach (array_keys($formData) as $key) {
+            self::assertArrayHasKey($key, $children);
+        }
+
+        foreach ($objectToCompare as $image) {
+            if (false === $this->entityManager->contains($image)) {
+                $image->setCreatedAt(new DateTime());
+                $this->entityManager->persist($image);
+            }
+        }
+
+        $this->entityManager->flush();
+    }
+
+    private static function sanitizeUpdatedAtDates(ArrayCollection $object, ArrayCollection $objectToCompare)
     {
         /**
          * @var SpecificImage $firstImage
@@ -203,203 +199,88 @@ class ImageTypeTest extends KernelTestCase
         $secondImage->setUpdatedAt($date);
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::__construct
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::configureOptions
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::buildForm
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::getParent
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::getBlockPrefix
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::preSubmit
-     *
-     * @covers \Barthy\ImageUploadBundle\Form\ImageCollectionType::__construct
-     * @covers \Barthy\ImageUploadBundle\Form\ImageCollectionType::configureOptions
-     * @covers \Barthy\ImageUploadBundle\Form\ImageCollectionType::getParent
-     * @covers \Barthy\ImageUploadBundle\Form\ImageCollectionType::getBlockPrefix
-     *
-     * @covers \Barthy\ImageUploadBundle\Form\SortableImageUploadType::buildForm
-     * @covers \Barthy\ImageUploadBundle\Form\SortableImageUploadType::getBlockPrefix
-     * @throws \Exception
-     */
-    public function testSubmitValidData(): void
-    {
-        $formData = self::getValidDataSet();
-
-        $objectToCompare = new ArrayCollection();
-        $object = self::getArrayCollection($formData);
-        $this->submitForm($object, $objectToCompare, $formData);
-
-        self::assertFileExists(self::$kernel->getProjectDir().'/tests/public/uploads/images/test.jpeg');
-
-        /**
-         * @var SpecificImage $persistedImage
-         */
-        $persistedImage = $objectToCompare->get('0');
-
-        $formData[0]['x'] = 100;
-        $formData[0]['imageFile'] = null;
-        $formData[0]['translations']['de']['title'] = 'Anderer Titel';
-
-        $object->get('0')->setX('100');
-        $object->get('0')->setImageFile(null);
-        $object->get('0')->setFileName('anderer-titel.jpeg');
-        $object->get('0')->setSize($persistedImage->getSize());
-        $object->get('0')->setMimeType($persistedImage->getMimeType());
-        $object->get('0')->setDimensions($persistedImage->getDimensions());
-
-        $object->get('0')->translate('de')->setTitle('Anderer Titel');
-
-        $this->submitForm($object, $objectToCompare, $formData);
-
-        self::assertFileNotExists(self::$kernel->getProjectDir().'/tests/public/uploads/images/test.jpeg');
-        self::assertFileExists(self::$kernel->getProjectDir().'/tests/public/uploads/images/anderer-titel.jpeg');
-
-        $formData[0]['y'] = 100;
-        $object->get('0')->setY('100');
-
-        $this->submitForm($object, $objectToCompare, $formData);
-
-        $formData[0]['w'] = 200;
-        $object->get('0')->setW('200');
-
-        $this->submitForm($object, $objectToCompare, $formData);
-
-        $formData[0]['h'] = 300;
-        $object->get('0')->setH('300');
-
-        $this->submitForm($object, $objectToCompare, $formData);
-    }
-
-    /**
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::__construct
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::configureOptions
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::buildForm
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::getParent
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::getBlockPrefix
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::preSubmit
-     *
-     * @covers \Barthy\ImageUploadBundle\Form\ImageCollectionType::__construct
-     * @covers \Barthy\ImageUploadBundle\Form\ImageCollectionType::configureOptions
-     * @covers \Barthy\ImageUploadBundle\Form\ImageCollectionType::getParent
-     * @covers \Barthy\ImageUploadBundle\Form\ImageCollectionType::getBlockPrefix
-     *
-     * @covers \Barthy\ImageUploadBundle\Form\SortableImageUploadType::buildForm
-     * @covers \Barthy\ImageUploadBundle\Form\SortableImageUploadType::getBlockPrefix
-     *
-     * @param \Doctrine\Common\Collections\ArrayCollection $object
-     * @param \Doctrine\Common\Collections\ArrayCollection $objectToCompare
-     *
-     * @param array                                        $formData
-     *
-     * @throws \Doctrine\ORM\ORMException
-     */
-    private function submitForm(ArrayCollection &$object, ArrayCollection &$objectToCompare, array &$formData): void
-    {
-        $form = $this->formFactory->create(
-            ImageCollectionType::class,
-            $objectToCompare,
-            [
-                'sortable' => true,
-            ]
-        );
-
-        $form->submit($formData);
-
-        if (false === $form->isValid()) {
-            $errors = $form->get('0')->get('imageFile')->getErrors();
-
-            foreach ($errors as $error) {
-                echo $error->getOrigin()->getName().': '.$error->getMessage().PHP_EOL;
-            }
-        }
-
-        self::assertTrue($form->isValid());
-        self::assertTrue($form->isSynchronized());
-
-        self::sanitizeUpdatedAtDates($object, $objectToCompare);
-        self::assertEquals($object, $objectToCompare);
-
-        $view = $form->createView();
-        $children = $view->children;
-
-        foreach (array_keys($formData) as $key) {
-            self::assertArrayHasKey($key, $children);
-        }
-
-        foreach ($objectToCompare as $image) {
-            if (false === $this->entityManager->contains($image)) {
-                $this->entityManager->persist($image);
-            }
-        }
-
-        $this->entityManager->flush();
-    }
-
-    /**
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::configureOptions
-     *
-     * @expectedException OptionDefinitionException
-     */
     public function testAspectHeightResolving()
     {
-        self::expectException(OptionDefinitionException::class);
-        $objectToCompare = new ArrayCollection();
-        $this->formFactory->create(
-            ImageCollectionType::class,
-            $objectToCompare,
-            [
-                'sortable'              => true,
-                'cropper_aspect_height' => 2,
-            ]
-        );
+        $this->assertThrows(OptionDefinitionException::class, function () {
+            $objectToCompare = new ArrayCollection();
+            $this->formFactory->create(
+                ImageCollectionType::class,
+                $objectToCompare,
+                [
+                    'sortable'              => true,
+                    'cropper_aspect_height' => 2,
+                ]
+            );
+        });
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::configureOptions
-     *
-     * @expectedException OptionDefinitionException
-     */
     public function testAspectWidthResolving()
     {
-        self::expectException(OptionDefinitionException::class);
-        $objectToCompare = new ArrayCollection();
-        $this->formFactory->create(
-            ImageCollectionType::class,
-            $objectToCompare,
-            [
-                'sortable'             => true,
-                'cropper_aspect_width' => 2,
-            ]
-        );
+        $this->assertThrows(OptionDefinitionException::class, function () {
+            $objectToCompare = new ArrayCollection();
+            $this->formFactory->create(
+                ImageCollectionType::class,
+                $objectToCompare,
+                [
+                    'sortable'             => true,
+                    'cropper_aspect_width' => 2,
+                ]
+            );
+        });
     }
 
-    /**
-     * @covers \Barthy\ImageUploadBundle\Form\ImageUploadType::getBlockPrefix
-     */
     public function testBlockPrefix()
     {
         $type = self::$container->get(ImageUploadType::class);
         self::assertEquals('barthy_image_upload', $type->getBlockPrefix());
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
-        $this->translator = null;
-        $this->cacheManager = null;
-        $this->entityManager = null;
-        $this->imageUploadConfig = null;
-        $this->slugFactory = null;
+        $this->translator             = null;
+        $this->entityManager          = null;
+        $this->imageUploadConfig      = null;
         $this->propertyMappingFactory = null;
-        $this->formFactory = null;
+        $this->formFactory            = null;
 
         self::$fileSystem->remove(self::$kernel->getProjectDir().'/tests/public');
 
         parent::tearDown();
     }
 
-    public static function tearDownAfterClass()
+    protected function setUp(): void
     {
-        self::$fileSystem = null;
-        parent::tearDownAfterClass();
+        self::bootKernel();
+
+        $this->translator             = self::$container->get(TranslatorInterface::class);
+        $this->entityManager          = self::$container->get(EntityManagerInterface::class);
+        $this->imageUploadConfig      = self::$container->get(ImageUploadConfig::class);
+        $this->propertyMappingFactory = self::$container->get(PropertyMappingFactory::class);
+        $this->formFactory            = self::$container->get(FormFactoryInterface::class);
+
+        parent::setUp();
     }
 
+    protected function getExtensions()
+    {
+        $collectionType = new ImageCollectionType($this->translator);
+
+        $imageType = new ImageUploadType(
+            self::$kernel,
+            $this->entityManager,
+            $this->imageUploadConfig,
+            $this->propertyMappingFactory
+        );
+
+        $sortableImageType = new SortableImageUploadType(
+            self::$kernel,
+            $this->entityManager,
+            $this->imageUploadConfig,
+            $this->propertyMappingFactory
+        );
+
+        return [
+            new PreloadedExtension([$imageType, $sortableImageType, $collectionType], []),
+        ];
+    }
 }
