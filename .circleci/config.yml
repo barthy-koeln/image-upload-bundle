@@ -2,14 +2,13 @@ version: 2.1
 
 workflows:
   tests-coverage-badge:
-    unit-test:
-      jobs:
-        - unit-test:
-            context:
-              - badges
+    jobs:
+      - tests-coverage-badge:
+          context:
+            - badges
 
 jobs:
-  unit-test:
+  tests-coverage-badge:
     docker:
       - image: circleci/php:7.4.10-cli
     working_directory: ~/image-upload-bundle
