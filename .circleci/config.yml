@@ -1,13 +1,13 @@
-version: 2.2
+version: 2.1
 
 workflows:
   tests-coverage-badge:
-    jobs:
+    unit-test:
       - build:
           context: bagdes
 
 jobs:
-  build:
+  unit-test:
     docker:
       - image: circleci/php:7.4.10-cli
     working_directory: ~/image-upload-bundle
