@@ -29,7 +29,7 @@ if [ -z "$BADGE_TOKEN" ]; then
   exit 0
 fi
 
-curl https://badges.barthy.koeln/badge/cached-prezent-translation/coverage \
+curl https://badges.barthy.koeln/badge/image-upload-bundle/coverage \
   --header "Content-Type: application/json" \
   --header "X-Auth-Token: $BADGE_TOKEN" \
   --request POST \
