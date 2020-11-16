@@ -3,8 +3,10 @@ version: 2.1
 workflows:
   tests-coverage-badge:
     unit-test:
-      - build:
-          context: bagdes
+      jobs:
+        - unit-test:
+            context:
+              - badges
 
 jobs:
   unit-test:
