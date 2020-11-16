@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraint;
  * @Annotation
  * @Target({"CLASS", "ANNOTATION"})
  */
-class FileTitleConstraint extends Constraint
+class RequiredTranslationConstraint extends Constraint
 {
     public string $message = 'file_title_constraint.message';
 
@@ -17,7 +17,7 @@ class FileTitleConstraint extends Constraint
      */
     public function validatedBy()
     {
-        return FileTitleConstraintValidator::class;
+        return RequiredTranslationConstraintValidator::class;
     }
 
     /**

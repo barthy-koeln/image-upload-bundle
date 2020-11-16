@@ -18,25 +18,16 @@ class ImageUploadConfigTest extends KernelTestCase
         parent::setUp();
     }
 
-    /**
-     * @covers \BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig::__construct
-     */
     public function testConfigInjection()
     {
         self::assertNotNull($this->config);
     }
 
-    /**
-     * @covers \BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig::getFileNameLanguage
-     */
-    public function testFileNameLanguageFunctions()
+    public function testRequiredTranslationFunctions()
     {
-        self::assertNotNull($this->config->getFileNameLanguage());
+        self::assertNotNull($this->config->getRequiredTranslation());
     }
 
-    /**
-     * @covers \BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig::getMaxFileSize
-     */
     public function testMaxFileSizeFunctions()
     {
         self::assertNotNull($this->config->getMaxFileSize());

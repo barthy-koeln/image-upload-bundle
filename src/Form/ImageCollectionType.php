@@ -33,8 +33,8 @@ class ImageCollectionType extends AbstractType
         $resolver->setDefaults(
             [
                 'accept'                      => 'image/jpeg',
-                'cropper_aspect_width'        => null,
-                'cropper_aspect_height'       => null,
+                'aspect_width'                => null,
+                'aspect_height'               => null,
                 'sortable'                    => false,
                 'allow_add'                   => true,
                 'allow_delete'                => true,
@@ -66,8 +66,8 @@ class ImageCollectionType extends AbstractType
                     return [
                         'label'                       => false,
                         'accept'                      => $options['accept'],
-                        'cropper_aspect_width'        => $options['cropper_aspect_width'],
-                        'cropper_aspect_height'       => $options['cropper_aspect_height'],
+                        'aspect_width'                => $options['aspect_width'],
+                        'aspect_height'               => $options['aspect_height'],
                         'excluded_translation_fields' => $options['excluded_translation_fields'],
                         'attr'                        => [
                             'class' => $options['entry_classes'],

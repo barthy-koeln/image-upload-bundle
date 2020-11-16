@@ -63,16 +63,20 @@ class ImageTypeTest extends KernelTestCase
         $objectToCompare = new ArrayCollection();
         $object          = self::getArrayCollection($formData);
         $this->submitForm($object, $objectToCompare, $formData);
-        self::assertFileExists(self::$kernel->getProjectDir().'/tests/public/uploads/images/'.$object->get(0)->getFileName());
+        self::assertFileExists(
+            self::$kernel->getProjectDir().'/tests/public/uploads/images/'.$object->get(0)->getFileName()
+        );
 
         $object->get(0)->setImageFile(null);
         $objectToCompare->get(0)->setImageFile(null);
         $formData[0]['imageFile'] = null;
         $this->submitForm($object, $objectToCompare, $formData);
-        self::assertFileExists(self::$kernel->getProjectDir().'/tests/public/uploads/images/'.$object->get(0)->getFileName());
+        self::assertFileExists(
+            self::$kernel->getProjectDir().'/tests/public/uploads/images/'.$object->get(0)->getFileName()
+        );
     }
 
-    private static function getValidDataSet()
+    private static function getValidDataSet(bool $crop = false): array
     {
         $basePath = self::$kernel->getProjectDir().'/tests/Fixtures/Files/';
         $fileName = 'small_image.jpg';
@@ -90,22 +94,30 @@ class ImageTypeTest extends KernelTestCase
             true
         );
 
-        return [
-            [
-                'translations' => [
-                    'de' => [
-                        'title' => 'Test',
-                        'alt'   => 'Testing',
-                    ],
+        $data = [
+            'translations' => [
+                'de' => [
+                    'title' => 'Test',
+                    'alt'   => 'Testing',
                 ],
-                'imageFile'    => $file,
-                'position'     => 0,
-                'x'            => 0,
-                'y'            => 0,
-                'w'            => 1280,
-                'h'            => 720,
             ],
+            'imageFile'    => $file,
+            'position'     => 0,
         ];
+
+        if ($crop) {
+            $data = array_merge(
+                $data,
+                [
+                    'x' => 0,
+                    'y' => 0,
+                    'w' => 1280,
+                    'h' => 720,
+                ]
+            );
+        }
+
+        return [$data];
     }
 
     /**
@@ -128,10 +140,11 @@ class ImageTypeTest extends KernelTestCase
 
             $image->setPosition($imageData['position']);
             $image->setImageFile($imageData['imageFile']);
-            $image->setX($imageData['x']);
-            $image->setY($imageData['y']);
-            $image->setW($imageData['w']);
-            $image->setH($imageData['h']);
+
+            $image->setX($imageData['x'] ?? null);
+            $image->setY($imageData['y'] ?? null);
+            $image->setW($imageData['w'] ?? null);
+            $image->setH($imageData['h'] ?? null);
 
             $object->add($image);
         }
@@ -150,14 +163,6 @@ class ImageTypeTest extends KernelTestCase
         );
 
         $form->submit($formData);
-
-        if (false === $form->isValid()) {
-            $errors = $form->getErrors(true);
-
-            foreach ($errors as $error) {
-                echo PHP_EOL.$error->getOrigin()->getName().': '.$error->getMessage().PHP_EOL;
-            }
-        }
 
         self::assertTrue($form->isValid());
         self::assertTrue($form->isSynchronized());
@@ -201,38 +206,38 @@ class ImageTypeTest extends KernelTestCase
 
     public function testAspectHeightResolving()
     {
-        $this->assertThrows(OptionDefinitionException::class, function () {
-            $objectToCompare = new ArrayCollection();
-            $this->formFactory->create(
-                ImageCollectionType::class,
-                $objectToCompare,
-                [
-                    'sortable'              => true,
-                    'cropper_aspect_height' => 2,
-                ]
-            );
-        });
+        $this->assertThrows(
+            OptionDefinitionException::class,
+            function () {
+                $objectToCompare = new ArrayCollection();
+                $this->formFactory->create(
+                    ImageCollectionType::class,
+                    $objectToCompare,
+                    [
+                        'sortable'      => true,
+                        'aspect_height' => 2,
+                    ]
+                );
+            }
+        );
     }
 
     public function testAspectWidthResolving()
     {
-        $this->assertThrows(OptionDefinitionException::class, function () {
-            $objectToCompare = new ArrayCollection();
-            $this->formFactory->create(
-                ImageCollectionType::class,
-                $objectToCompare,
-                [
-                    'sortable'             => true,
-                    'cropper_aspect_width' => 2,
-                ]
-            );
-        });
-    }
-
-    public function testBlockPrefix()
-    {
-        $type = self::$container->get(ImageUploadType::class);
-        self::assertEquals('barthy_image_upload', $type->getBlockPrefix());
+        $this->assertThrows(
+            OptionDefinitionException::class,
+            function () {
+                $objectToCompare = new ArrayCollection();
+                $this->formFactory->create(
+                    ImageCollectionType::class,
+                    $objectToCompare,
+                    [
+                        'sortable'     => true,
+                        'aspect_width' => 2,
+                    ]
+                );
+            }
+        );
     }
 
     public function tearDown(): void

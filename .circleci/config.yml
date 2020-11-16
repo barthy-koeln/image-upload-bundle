@@ -1,10 +1,15 @@
-version: 2
+version: 2.2
+
+workflows:
+  tests-coverage-badge:
+    jobs:
+      - build:
+          context: bagdes
+
 jobs:
   build:
     docker:
-      - image: circleci/php:7.4.2-cli
-    environment:
-      BADGE_TOKEN: c8da67c0-962c-46da-841a-d77b0ad34991
+      - image: circleci/php:7.4.10-cli
     working_directory: ~/image-upload-bundle
     steps:
       - checkout

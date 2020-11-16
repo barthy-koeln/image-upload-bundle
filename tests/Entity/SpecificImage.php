@@ -5,7 +5,7 @@ namespace Tests\Entity;
 use BarthyKoeln\ImageUploadBundle\Entity\ImageInterface;
 use BarthyKoeln\ImageUploadBundle\Entity\ImageTrait;
 use BarthyKoeln\ImageUploadBundle\Entity\TranslatedImageTrait;
-use BarthyKoeln\ImageUploadBundle\Validator\FileTitleConstraint;
+use BarthyKoeln\ImageUploadBundle\Validator\RequiredTranslationConstraint;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -14,7 +14,7 @@ use Prezent\Doctrine\Translatable\Entity\AbstractTranslatable;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
- * @FileTitleConstraint()
+ * @RequiredTranslationConstraint()
  * @ORM\Entity()
  * @Vich\Uploadable
  */

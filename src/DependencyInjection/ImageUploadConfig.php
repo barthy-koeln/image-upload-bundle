@@ -4,37 +4,20 @@ namespace BarthyKoeln\ImageUploadBundle\DependencyInjection;
 
 class ImageUploadConfig
 {
-    /**
-     * @var string
-     */
-    private $fileNameLanguage;
+    private string $maxFileSize;
 
-    /**
-     * @var string
-     */
-    private $maxFileSize;
+    private string $imageClass;
 
-    /**
-     * @var string
-     */
-    private $imageClass;
+    private string $imagePathPrefix;
 
-    /**
-     * @var string
-     */
-    private $imagePathPrefix;
+    private string $requiredTranslation;
 
     public function __construct(array $config)
     {
-        $this->fileNameLanguage = $config['file_name_language'];
-        $this->maxFileSize      = $config['max_file_size'];
-        $this->imageClass       = $config['image_class'];
-        $this->imagePathPrefix  = $config['image_path_prefix'];
-    }
-
-    public function getFileNameLanguage(): string
-    {
-        return $this->fileNameLanguage;
+        $this->requiredTranslation = $config['required_translation'];
+        $this->maxFileSize         = $config['max_file_size'];
+        $this->imageClass          = $config['image_class'];
+        $this->imagePathPrefix     = $config['image_path_prefix'];
     }
 
     public function getMaxFileSize(): string
@@ -50,5 +33,10 @@ class ImageUploadConfig
     public function getImagePathPrefix(): string
     {
         return $this->imagePathPrefix;
+    }
+
+    public function getRequiredTranslation(): ?string
+    {
+        return $this->requiredTranslation;
     }
 }

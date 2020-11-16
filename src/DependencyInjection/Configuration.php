@@ -18,18 +18,23 @@ class Configuration implements ConfigurationInterface
 
         $treeBuilder->getRootNode()
             ->children()
-            ->scalarNode('file_name_language')
-            ->defaultValue('en')
-            ->end()
-            ->scalarNode('max_file_size')
-            ->defaultValue('2M')
-            ->end()
+
             ->scalarNode('image_class')
             ->isRequired()
             ->end()
+
             ->scalarNode('image_path_prefix')
             ->isRequired()
             ->end()
+
+            ->scalarNode('max_file_size')
+            ->defaultValue('2M')
+            ->end()
+
+            ->scalarNode('required_translation')
+            ->defaultValue(null)
+            ->end()
+
             ->end();
 
         return $treeBuilder;

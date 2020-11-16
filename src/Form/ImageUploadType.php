@@ -4,6 +4,7 @@ namespace BarthyKoeln\ImageUploadBundle\Form;
 
 use A2lix\TranslationFormBundle\Form\Type\TranslationsType;
 use BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
+use BarthyKoeln\ImageUploadBundle\Entity\ImageInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -12,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\OptionsResolver\Exception\OptionDefinitionException;
 use Symfony\Component\OptionsResolver\Options;
@@ -40,120 +42,129 @@ class ImageUploadType extends AbstractType
         $this->mappingFactory    = $mappingFactory;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        if ($options['crop']) {
+            $this->addCropFields($builder);
+        }
+
+        if ($options['translations']) {
+            $this->addTranslationFields($builder, $options);
+        }
+
         $builder
             ->addEventListener(
                 FormEvents::POST_SET_DATA,
-                function (FormEvent $event) use ($options) {
-                    /**
-                     * @var \BarthyKoeln\ImageUploadBundle\Entity\ImageInterface $entity
-                     */
-                    $entity    = $event->getData();
-                    $nullImage = null === $entity || null === $entity->getFileName();
-
-                    $event->getForm()
-                        ->add(
-                            'imageFile',
-                            FileType::class,
-                            [
-                                'error_bubbling'     => false,
-                                'translation_domain' => 'barthy_admin',
-                                'label'              => false,
-                                'required'           => false,
-                                'attr'               => [
-                                    'placeholder'        => 'choose_file',
-                                    'data-file-name'     => false === $nullImage ? $this->getPreviewImagePath(
-                                        $entity->getFileName()
-                                    ) : '',
-                                    'data-crop-data'     => false === $nullImage ? $entity->getJSONCropData() : '',
-                                    'accept'             => $options['accept'],
-                                    'data-aspect-width'  => $options['cropper_aspect_width'],
-                                    'data-aspect-height' => $options['cropper_aspect_height'],
-                                ],
-                            ]
-                        )
-                        ->add(
-                            'x',
-                            HiddenType::class,
-                            [
-                                'by_reference' => false,
-                                'attr'         => [
-                                    'class' => 'crop-x',
-                                ],
-                            ]
-                        )
-                        ->add(
-                            'y',
-                            HiddenType::class,
-                            [
-                                'by_reference' => false,
-                                'attr'         => [
-                                    'class' => 'crop-y',
-                                ],
-                            ]
-                        )
-                        ->add(
-                            'w',
-                            HiddenType::class,
-                            [
-                                'by_reference' => false,
-                                'attr'         => [
-                                    'class' => 'crop-w',
-                                ],
-                            ]
-                        )
-                        ->add(
-                            'h',
-                            HiddenType::class,
-                            [
-                                'by_reference' => false,
-                                'attr'         => [
-                                    'class' => 'crop-h',
-                                ],
-                            ]
-                        );
-
-                    if ($options['translations']) {
-                        $event->getForm()
-                            ->add(
-                                'translations',
-                                TranslationsType::class,
-                                [
-                                    'label'           => false,
-                                    'required'        => false,
-                                    'error_bubbling'  => false,
-                                    'attr'            => [
-                                        'class' => 'sort-hidden',
-                                    ],
-                                    'fields'          => [
-                                        'title' => [
-                                            'field_type'         => TextType::class,
-                                            'label'              => 'image.title',
-                                            'translation_domain' => 'barthy_admin',
-                                            'error_bubbling'     => true,
-                                        ],
-                                        'alt'   => [
-                                            'field_type'         => TextType::class,
-                                            'label'              => 'image.alt',
-                                            'translation_domain' => 'barthy_admin',
-                                            'error_bubbling'     => true,
-                                        ],
-                                    ],
-                                    'excluded_fields' => $options['excluded_translation_fields'],
-                                ]
-                            );
-                    }
-                }
+                fn (FormEvent $event) => $this->addImageField($event->getData(), $event->getForm(), $options)
             );
     }
 
-    private function getPreviewImagePath(string $filename)
+    private function addCropFields(FormBuilderInterface $form): void
+    {
+        $form
+            ->add(
+                'x',
+                HiddenType::class,
+                [
+                    'attr'         => [
+                        'class' => 'crop-x',
+                    ],
+                ]
+            )
+            ->add(
+                'y',
+                HiddenType::class,
+                [
+                    'attr'         => [
+                        'class' => 'crop-y',
+                    ],
+                ]
+            )
+            ->add(
+                'w',
+                HiddenType::class,
+                [
+                    'attr'         => [
+                        'class' => 'crop-w',
+                    ],
+                ]
+            )
+            ->add(
+                'h',
+                HiddenType::class,
+                [
+                    'attr'         => [
+                        'class' => 'crop-h',
+                    ],
+                ]
+            );
+    }
+
+    private function addTranslationFields(FormBuilderInterface $form, array $options): void
+    {
+        $form
+            ->add(
+                'translations',
+                TranslationsType::class,
+                [
+                    'label'           => false,
+                    'required'        => false,
+                    'error_bubbling'  => false,
+                    'attr'            => [
+                        'class' => 'sort-hidden',
+                    ],
+                    'fields'          => [
+                        'title' => [
+                            'field_type'         => TextType::class,
+                            'label'              => 'image.title',
+                            'translation_domain' => 'barthy_admin',
+                            'error_bubbling'     => true,
+                        ],
+                        'alt'   => [
+                            'field_type'         => TextType::class,
+                            'label'              => 'image.alt',
+                            'translation_domain' => 'barthy_admin',
+                            'error_bubbling'     => true,
+                        ],
+                    ],
+                    'excluded_fields' => $options['excluded_translation_fields'],
+                ]
+            );
+    }
+
+    private function addImageField(?ImageInterface $image, FormInterface $form, array $options): void
+    {
+        $nullImage = null === $image || null === $image->getFileName();
+
+        $form
+            ->add(
+                'imageFile',
+                FileType::class,
+                [
+                    'error_bubbling'     => false,
+                    'translation_domain' => 'barthy_admin',
+                    'label'              => false,
+                    'required'           => false,
+                    'attr'               => [
+                        'placeholder'        => 'choose_file',
+                        'data-file-name'     => false === $nullImage ? $this->getPreviewImagePath(
+                            $image->getFileName()
+                        ) : '',
+                        'data-crop-data'     => false === $nullImage ? $image->getJSONCropData() : '',
+                        'accept'             => $options['accept'],
+                        'data-aspect-width'  => $options['aspect_width'],
+                        'data-aspect-height' => $options['aspect_height'],
+                    ],
+                ]
+            );
+    }
+
+    private function getPreviewImagePath(string $filename): string
     {
         return $this->imageUploadConfig->getImagePathPrefix().DIRECTORY_SEPARATOR.$filename;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $imageClass = $this->imageUploadConfig->getImageClass();
         $metadata   = $this->entityManager->getClassMetadata($imageClass);
@@ -162,22 +173,24 @@ class ImageUploadType extends AbstractType
             [
                 'data_class'                  => $imageClass,
                 'accept'                      => 'image/jpeg',
-                'cropper_aspect_width'        => null,
-                'cropper_aspect_height'       => null,
+                'aspect_width'                => null,
+                'aspect_height'               => null,
                 'excluded_translation_fields' => [],
                 'translations'                => $metadata->hasAssociation('translations'),
                 'crop'                        => function (Options $options) {
-                    if (null === $options['cropper_aspect_width'] xor null === $options['cropper_aspect_height']) {
-                        throw new OptionDefinitionException("cropper.js is enabled, but only one aspect ratio option has been defined. Use both the 'cropper_aspect_width' and 'cropper_aspect_height' options.");
+                    if (null === $options['aspect_width'] xor null === $options['aspect_height']) {
+                        throw new OptionDefinitionException(
+                            'Only one aspect ratio option has been defined. Use both the "aspect_width" and "aspect_height" options.'
+                        );
                     }
 
-                    return null !== $options['cropper_aspect_width'] && null !== $options['cropper_aspect_height'];
+                    return null !== $options['aspect_width'] && null !== $options['aspect_height'];
                 },
             ]
         );
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'barthy_image_upload';
     }

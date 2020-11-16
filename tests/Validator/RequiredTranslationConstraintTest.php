@@ -3,8 +3,8 @@
 namespace Tests\Validator;
 
 use BarthyKoeln\ImageUploadBundle\DependencyInjection\ImageUploadConfig;
-use BarthyKoeln\ImageUploadBundle\Validator\FileTitleConstraint;
-use BarthyKoeln\ImageUploadBundle\Validator\FileTitleConstraintValidator;
+use BarthyKoeln\ImageUploadBundle\Validator\RequiredTranslationConstraint;
+use BarthyKoeln\ImageUploadBundle\Validator\RequiredTranslationConstraintValidator;
 use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Constraint;
@@ -12,15 +12,15 @@ use Tests\Entity\FileSizeEntity;
 use Tests\Entity\SpecificImage;
 use Tests\Entity\SpecificImageTranslation;
 
-class FileTitleConstraintTest extends KernelTestCase
+class RequiredTranslationConstraintTest extends KernelTestCase
 {
-    private FileTitleConstraint $constraint;
+    private RequiredTranslationConstraint $constraint;
 
     public function setUp(): void
     {
         self::bootKernel();
 
-        $this->constraint = new FileTitleConstraint();
+        $this->constraint = new RequiredTranslationConstraint();
 
         parent::setUp();
     }
@@ -57,7 +57,7 @@ class FileTitleConstraintTest extends KernelTestCase
          * @var ImageUploadConfig $config
          */
         $config    = self::$container->get(ImageUploadConfig::class);
-        $validator = new FileTitleConstraintValidator($config);
+        $validator = new RequiredTranslationConstraintValidator($config);
 
         $reflection = new ReflectionClass($validator);
         $property   = $reflection->getProperty('config');

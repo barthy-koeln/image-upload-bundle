@@ -40,12 +40,6 @@ class FileSizeConstraintTest extends KernelTestCase
         $entity->imageFile = new File(__DIR__.'/../Fixtures/Files/small_image.jpg', true);
         $violations        = $this->validator->validate($entity->imageFile, $this->constraint);
         $this->assertEquals(0, $violations->count());
-
-        /**
-         * @var \Symfony\Component\Validator\ConstraintViolation $violation
-         */
-        foreach ($violations as $violation) {
-        }
     }
 
     /**

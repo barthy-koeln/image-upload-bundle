@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class SortableImageUploadType extends ImageUploadType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add(
@@ -23,7 +23,7 @@ class SortableImageUploadType extends ImageUploadType
         parent::buildForm($builder, $options);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'barthy_image_sortable_upload';
     }

@@ -19,7 +19,7 @@ services:
 
   BarthyKoeln\ImageUploadBundle\Validator\FileSizeConstraintValidator: ~
 
-  BarthyKoeln\ImageUploadBundle\Validator\FileTitleConstraintValidator: ~
+  BarthyKoeln\ImageUploadBundle\Validator\RequiredTranslationConstraintValidator: ~
 
   BarthyKoeln\ImageUploadBundle\Form\ImageUploadType:
     public: true

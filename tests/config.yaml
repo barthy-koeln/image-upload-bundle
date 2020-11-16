@@ -23,10 +23,10 @@ framework:
     storage_id: session.storage.mock_file
 
 barthy_koeln_image_upload:
-  max_file_size: 2M
-  file_name_language: '%locale%'
-  image_class: \Tests\Entity\SpecificImage
+  image_class: Tests\Entity\SpecificImage
   image_path_prefix: '%image_path_prefix%'
+  required_translation: '%locale%'
+  max_file_size: 2M
 
 vich_uploader:
   db_driver: orm

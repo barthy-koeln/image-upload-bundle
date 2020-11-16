@@ -8,7 +8,7 @@ use Locale;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class FileTitleConstraintValidator extends ConstraintValidator
+class RequiredTranslationConstraintValidator extends ConstraintValidator
 {
     private ImageUploadConfig $config;
 
@@ -29,7 +29,11 @@ class FileTitleConstraintValidator extends ConstraintValidator
             return;
         }
 
-        $locale = $this->config->getFileNameLanguage();
+        $locale = $this->config->getRequiredTranslation();
+
+        if (null === $locale) {
+            return;
+        }
 
         /**
          * @var \Doctrine\Common\Collections\Collection $translations
