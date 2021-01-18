@@ -23,7 +23,16 @@ class ImageFilterExtension extends AbstractExtension
     ): array {
         $params = [];
 
-        if (null !== $image) {
+        $values = [
+            $image->getW(),
+            $image->getH(),
+            $image->getX(),
+            $image->getY(),
+        ];
+
+        $crop = 4 === count(array_filter($values));
+
+        if ($crop && null !== $image) {
             $params = [
                 'crop' => [
                     'size'  => [
