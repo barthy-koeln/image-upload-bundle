@@ -1,5 +1,5 @@
 {
-  "name": "barthy/image-upload-bundle",
+  "name": "barthy-koeln/image-upload-bundle",
   "type": "symfony-bundle",
   "description": "This bundle provides commonly used functions to upload and handle images in symfony applications. It primarily is meant to work with barthy/admin-bundle.",
   "keywords": [
