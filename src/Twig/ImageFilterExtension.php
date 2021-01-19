@@ -34,7 +34,7 @@ class ImageFilterExtension extends AbstractExtension
             $image->getY(),
         ];
 
-        $crop = 4 === count(array_filter($values));
+        $crop = 4 === count(array_filter($values, fn ($value) => null !== $value));
 
         if ($crop) {
             $params = [
